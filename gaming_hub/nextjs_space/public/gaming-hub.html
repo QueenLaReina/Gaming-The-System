@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Gaming The System — Accessible Gaming Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       WCAG 2.1 AA DESIGN TOKENS & ACCESSIBILITY FOUNDATION
+       ========================================================================== */
+    :root {
+      --bg-page: #0f172a;             /* Slate 900 */
+      --bg-surface: #1e293b;          /* Slate 800 */
+      --bg-surface-elevated: #334155; /* Slate 700 */
+      --border-subtle: #475569;       /* Slate 600 */
+      
+      --text-main: #f8fafc;           /* Slate 50 */
+      --text-muted: #cbd5e1;          /* Slate 300 - High Contrast 7:1+ */
+      --text-subtle: #94a3b8;         /* Slate 400 */
+      
+      --primary: #38bdf8;             /* Sky 400 */
+      --primary-dark: #0284c7;        /* Sky 600 */
+      --focus-ring: #fbbf24;          /* Amber 400 - High Visibility Focus */
+      
+      --badge-bg: #0369a1;            /* Sky 700 */
+      --badge-text: #f0f9ff;
+      --tag-active-bg: #22c55e;       /* Green 500 */
+      --tag-active-text: #052e16;
+      --yt-red: #dc2626;              /* YouTube Red */
+      --yt-red-hover: #b91c1c;
+      --purple-accent: #a855f7;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      
+      --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Accessible Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -60px;
+      left: 1rem;
+      background: var(--focus-ring);
+      color: #000000;
+      font-weight: 700;
+      padding: 0.75rem 1.25rem;
+      z-index: 1000;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: top 0.2s ease;
+    }
+    .skip-link:focus {
+      top: 1rem;
+      outline: 3px solid #000000;
+    }
+
+    /* WCAG 2.1 AA Focus Rings */
+    :focus-visible {
+      outline: 3px solid var(--focus-ring) !important;
+      outline-offset: 3px !important;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Header */
+    header {
+      background-color: var(--bg-surface);
+      border-bottom: 2px solid var(--border-subtle);
+      padding: 1.5rem 0;
+    }
+
+    .header-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-title span {
+      color: var(--primary);
+    }
+
+    .sprint-badge {
+      display: inline-block;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+    }
+
+    /* ==========================================================================
+       MULTIMODAL VISION DROPZONE SECTION
+       ========================================================================== */
+    .vision-section {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border-bottom: 2px solid var(--border-subtle);
+      padding: 2rem 0;
+    }
+
+    .vision-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .vision-title {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .vision-subtitle {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin-top: 0.25rem;
+    }
+
+    .vision-section.is-collapsed { padding: 1.25rem 0; }
+    .vision-section.is-collapsed .vision-header { margin-bottom: 0; }
+    .vision-card[hidden], aside[hidden] { display: none !important; }
+
+    .btn-collapse {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.55rem 1rem;
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.875rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease;
+    }
+    .btn-collapse:hover { background-color: var(--border-subtle); }
+    .btn-collapse .chev { display: inline-block; transition: transform 0.2s ease; }
+    .btn-collapse[aria-expanded="true"] .chev { transform: rotate(180deg); }
+    .btn-collapse:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+
+    .vision-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .vision-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* API Key manager sub-card */
+    .api-key-box {
+      background-color: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .api-key-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .api-key-input {
+      flex: 1;
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.45rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+    }
+
+    /* Dropzone area */
+    .dropzone-box {
+      border: 2px dashed var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      background-color: rgba(15, 23, 42, 0.6);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    .dropzone-box:hover,
+    .dropzone-box.dragover {
+      border-color: var(--primary);
+      background-color: rgba(56, 189, 248, 0.08);
+    }
+
+    .dropzone-icon {
+      font-size: 2.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .dropzone-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .dropzone-help {
+      font-size: 0.8125rem;
+      color: var(--text-subtle);
+    }
+
+    .file-input-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    .sample-buttons-wrapper {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-sample {
+      background: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-sample:hover {
+      background: var(--border-subtle);
+      color: var(--text-main);
+      border-color: var(--primary);
+    }
+
+    /* Vision Results Panel */
+    .vision-results-panel {
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 280px;
+    }
+
+    .vision-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .vision-status-text {
+      font-size: 0.875rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--text-subtle);
+      display: inline-block;
+    }
+    .status-dot.scanning {
+      background-color: var(--focus-ring);
+      animation: pulse 1.2s infinite ease-in-out;
+    }
+    .status-dot.complete {
+      background-color: var(--tag-active-bg);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    .vision-content-zone {
+      flex: 1;
+    }
+
+    .vision-placeholder-content {
+      color: var(--text-subtle);
+      font-size: 0.9375rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    .parsed-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+      margin-right: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+    .badge-detected {
+      background-color: rgba(34, 197, 94, 0.2);
+      color: #86efac;
+      border: 1px solid #22c55e;
+    }
+    .badge-absent {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid #ef4444;
+    }
+
+    .vision-actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .btn-add-catalog {
+      background-color: var(--primary);
+      color: #000000;
+      font-weight: 700;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-add-catalog:hover {
+      background-color: #7dd3fc;
+    }
+
+    .btn-schema-toggle {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      cursor: pointer;
+    }
+
+    .raw-schema-viewer {
+      background: #020617;
+      color: #38bdf8;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem;
+      font-family: monospace;
+      font-size: 0.75rem;
+      margin-top: 0.75rem;
+      max-height: 180px;
+      overflow-y: auto;
+      display: none;
+      white-space: pre-wrap;
+    }
+    .raw-schema-viewer.visible {
+      display: block;
+    }
+
+    /* ==========================================================================
+       CATALOG LAYOUT
+       ========================================================================== */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 2rem;
+      padding: 2rem 0;
+      flex: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .app-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .app-layout.filters-collapsed {
+      grid-template-columns: 1fr;
+    }
+
+    .filter-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Sidebar Filters */
+    aside {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      height: fit-content;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .filter-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      color: var(--text-main);
+    }
+
+    .btn-reset {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-reset:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+    }
+
+    .filter-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-group-legend {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.625rem;
+      cursor: pointer;
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      user-select: none;
+    }
+    .checkbox-label:hover {
+      color: var(--text-main);
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-page);
+      display: grid;
+      place-content: center;
+      margin-top: 0.15rem;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"]:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox-label input[type="checkbox"]:checked::before {
+      content: "";
+      width: 0.65rem;
+      height: 0.65rem;
+      background-color: #000000;
+      clip-path: polygon(14% 44%, 0 60%, 38% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+
+    /* Main Area Controls */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-wrapper {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .search-input {
+      width: 100%;
+      background-color: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+    }
+    .search-input::placeholder {
+      color: var(--text-subtle);
+    }
+
+    .results-count {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Cards Grid */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .game-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .game-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s ease;
+      position: relative;
+    }
+    .game-card:hover {
+      border-color: var(--primary);
+    }
+
+    .game-card.newly-added {
+      border: 2px solid var(--purple-accent);
+      animation: highlightCard 2s ease;
+    }
+
+    @keyframes highlightCard {
+      0% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.6); }
+      100% { box-shadow: none; }
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-meta {
+      font-size: 0.875rem;
+      color: var(--text-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .platform-pill {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      padding: 0.125rem 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .features-list {
+      list-style: none;
+      margin: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .feature-item {
+      font-size: 0.875rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .feature-icon {
+      font-weight: 700;
+      flex-shrink: 0;
+      color: #4ade80; /* Green 400 */
+    }
+
+    .hardware-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0.75rem 0 1.25rem;
+    }
+
+    .hardware-tag {
+      background-color: #0f766e; /* Teal 700 */
+      color: #ccfbf1;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Trailer Actions (Direct Bounded Launch) */
+    .trailer-actions {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .trailer-preview-thumb {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-page);
+    }
+
+    .btn-trailer-launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background-color: var(--yt-red);
+      color: #ffffff;
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: background-color 0.15s ease;
+      text-align: center;
+    }
+    .btn-trailer-launch:hover {
+      background-color: var(--yt-red-hover);
+    }
+
+    .thumb-link {
+      display: block;
+      position: relative;
+      border-radius: var(--radius-sm);
+    }
+    .thumb-link .thumb-cta {
+      position: absolute;
+      left: 0.5rem;
+      bottom: 0.5rem;
+      background: rgba(15, 23, 42, 0.88);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+    }
+    .thumb-link:hover .trailer-preview-thumb { filter: brightness(1.1); }
+
+    .btn-details {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      background-color: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .btn-details:hover {
+      background-color: var(--primary);
+      color: var(--bg-page);
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      font-size: 0.8125rem;
+    }
+
+    .btn-flag {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-flag:hover {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+    }
+
+    .citation-link {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.75);
+      display: none;
+      place-items: center;
+      z-index: 2000;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      display: grid;
+    }
+
+    .modal-dialog {
+      background-color: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      padding: 1.5rem;
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9375rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn-submit {
+      background-color: var(--primary);
+      color: #000000;
+      font-weight: 700;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background-color: var(--tag-active-bg);
+      color: var(--tag-active-text);
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      display: none;
+      z-index: 3000;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Link for Keyboard Navigation -->
+  <a href="#catalog-main" class="skip-link">Skip to game catalog</a>
+
+  <!-- Header -->
+  <header role="banner">
+    <div class="container header-content">
+      <div>
+        <h1 class="brand-title">Gaming The System <span>| Accessible Gaming Hub</span></h1>
+        <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem;">
+          Verified Motor Accessibility & Adaptive Setup Catalog • CodeSquad Sprint (Team: Main Character Energy)
+        </p>
+      </div>
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <span class="sprint-badge">Sprint: Nov 2026</span>
+        <span class="sprint-badge" style="background-color: #047857;">Accuracy First</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MULTIMODAL VISION AI DROPZONE & AUDIT WORKFLOW
+       ========================================================================== -->
+  <section class="vision-section is-collapsed" id="vision-section" aria-labelledby="vision-heading">
+    <div class="container">
+      <div class="vision-header">
+        <div>
+          <h2 class="vision-title" id="vision-heading">
+            <span>📷</span> Multimodal Vision AI Auditor
+            <span class="sprint-badge" style="background-color: #6b21a8; color: #f3e8ff;">3-Layer Prompt Architecture</span>
+          </h2>
+          <p class="vision-subtitle">
+            Audit unlisted games instantly. Drop or upload an in-game accessibility settings menu, box art, or HUD screenshot to extract verified motor-accessibility tags and adaptive controller compatibility.
+          </p>
+        </div>
+        <button type="button" class="btn-collapse" id="btn-toggle-vision" aria-expanded="false" aria-controls="vision-panel">
+          <span id="vision-toggle-label">Open Auditor</span> <span class="chev" aria-hidden="true">▾</span>
+        </button>
+      </div>
+
+      <div class="vision-card" id="vision-panel" hidden>
+        <!-- Interactive Dropzone and API Key Controls -->
+        <div>
+          <!-- API Key Box -->
+          <div class="api-key-box">
+            <label for="gemini-api-key" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">
+              Gemini Vision API Key (Optional — built-in AI is used if left blank):
+            </label>
+            <div class="api-key-row">
+              <input 
+                type="password" 
+                id="gemini-api-key" 
+                class="api-key-input" 
+                placeholder="Leave blank to use the built-in AI, or enter your own Gemini key..."
+              >
+              <button type="button" class="btn-sample" id="btn-save-key">Save</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-subtle);">
+              <label style="cursor: pointer; display: flex; align-items: center; gap: 0.35rem;">
+                <input type="checkbox" id="remember-key-checkbox"> Remember Key
+              </label>
+              <span id="key-status-indicator">Mode: Built-in AI Vision</span>
+            </div>
+          </div>
+
+          <!-- Dropzone -->
+          <div 
+            class="dropzone-box" 
+            id="dropzone" 
+            tabindex="0" 
+            role="button" 
+            aria-label="Upload screenshot or settings menu image for accessibility vision analysis"
+          >
+            <input 
+              type="file" 
+              id="file-input" 
+              class="file-input-hidden" 
+              accept="image/png, image/jpeg, image/webp" 
+              tabindex="-1"
+            >
+            <div class="dropzone-icon" aria-hidden="true">📥</div>
+            <div class="dropzone-label">Drag & drop game screenshot here</div>
+            <div class="dropzone-help">or click to browse files (PNG, JPG, WEBP)</div>
+            
+            <div id="image-preview-container" style="display: none; margin-top: 1rem; width: 100%;">
+              <img id="image-preview" src="" alt="Uploaded screenshot preview" style="max-height: 120px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin: 0 auto; display: block;">
+              <span id="preview-filename" style="font-size: 0.75rem; color: var(--primary); display: block; margin-top: 0.25rem;"></span>
+            </div>
+          </div>
+
+          <!-- Sample Quick-Load Buttons -->
+          <div class="sample-buttons-wrapper">
+            <span style="font-size: 0.75rem; color: var(--text-subtle); width: 100%; text-align: center;">Try sample audit benchmarks:</span>
+            <button type="button" class="btn-sample" id="btn-sample-zelda">
+              ⚡ Zelda: OoT Remake
+            </button>
+            <button type="button" class="btn-sample" id="btn-sample-spiderman">
+              ⚡ Spider-Man 2
+            </button>
+            <button type="button" class="btn-sample" id="btn-sample-starfield">
+              ⚡ Starfield
+            </button>
+          </div>
+        </div>
+
+        <!-- Vision Results Output Panel -->
+        <div class="vision-results-panel" aria-live="polite">
+          <div>
+            <div class="vision-status-bar">
+              <span class="vision-status-text">
+                <span class="status-dot" id="status-dot"></span>
+                <span id="vision-status-label">Awaiting Screenshot</span>
+              </span>
+              <span id="vision-confidence" style="font-size: 0.8125rem; font-weight: 700; color: var(--text-subtle);"></span>
+            </div>
+
+            <!-- Content Area (Swapped dynamically) -->
+            <div class="vision-content-zone" id="vision-content">
+              <div class="vision-placeholder-content">
+                <div style="font-size: 1.75rem; margin-bottom: 0.5rem; opacity: 0.5;">🔍</div>
+                <p>Upload a screenshot or click a sample to execute the 3-Layer Vision Audit.</p>
+                <p style="font-size: 0.8125rem; margin-top: 0.25rem;">Live Gemini 3 Flash Multimodal Analysis • Strict JSON Output Schema</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions / Schema Controls -->
+          <div class="vision-actions-bar" id="vision-actions" style="display: none;">
+            <button type="button" class="btn-add-catalog" id="btn-add-to-catalog">
+              <span>+</span> Add Verified Game to Catalog
+            </button>
+            <button type="button" class="btn-schema-toggle" id="btn-toggle-schema">
+              { } View Strict JSON Contract
+            </button>
+          </div>
+
+          <!-- Raw Schema Pre Box -->
+          <pre class="raw-schema-viewer" id="raw-schema"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       CATALOG MATRIX & FILTERS SECTION
+       ========================================================================== -->
+  <div class="container app-layout filters-collapsed" id="app-layout">
+    
+    <!-- Sidebar Filters (starts closed) -->
+    <aside aria-label="Motor Accessibility Filters" id="filter-sidebar" hidden>
+      <div class="filter-header">
+        <h2 class="filter-title">Motor Filters</h2>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <button type="button" class="btn-reset" id="btn-reset-filters">Reset All</button>
+          <button type="button" class="btn-reset" id="btn-close-filters" aria-label="Close filters panel">✕</button>
+        </div>
+      </div>
+
+      <form id="filter-form">
+        <!-- Input Configuration -->
+        <div class="filter-group">
+          <span class="filter-group-legend">Input Configuration</span>
+          <label class="checkbox-label">
+            <input type="checkbox" name="filter" value="fullRemap">
+            Full In-Game Remapping
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="filter" value="holdToToggle">
+            Hold-to-Toggle Inputs
+          </label>
+        </div>
+
+        <!-- Dexterity & Reaction -->
+        <div class="filter-group">
+          <span class="filter-group-legend">Dexterity & Reaction</span>
+          <label class="checkbox-label">
+            <input type="checkbox" name="filter" value="qteBypass">
+            QTE Auto-Complete / Bypass
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="filter" value="singleStick">
+            Single-Stick Playable
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="filter" value="cameraLock">
+            Target Lock / Auto-Centering
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="filter" value="speedScaling">
+            Game Speed Scaling Slider
+          </label>
+        </div>
+
+        <!-- Hardware Compatibility -->
+        <div class="filter-group">
+          <span class="filter-group-legend">Hardware Compatibility</span>
+          <label class="checkbox-label">
+            <input type="checkbox" name="filter" value="psAccess">
+            PlayStation Access Profiled
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="filter" value="xac">
+            Xbox Adaptive / Copilot Validated
+          </label>
+        </div>
+      </form>
+    </aside>
+
+    <!-- Main Catalog View -->
+    <main id="catalog-main">
+      <div class="filter-toggle-row">
+        <button type="button" class="btn-collapse" id="btn-toggle-filters" aria-expanded="false" aria-controls="filter-sidebar">
+          <span aria-hidden="true">☰</span> <span id="filters-toggle-label">Show Motor Filters</span>
+          <span class="sprint-badge" id="active-filter-count" style="display:none;"></span>
+        </button>
+      </div>
+      <div class="controls-bar">
+        <div class="search-wrapper">
+          <input 
+            type="search" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="Search by title, genre, or platform (e.g. Celeste, PS5, Horror)..."
+            aria-label="Search games"
+          >
+        </div>
+        <div class="results-count" id="results-count" aria-live="polite">
+          Showing 7 of 7 verified seed titles
+        </div>
+      </div>
+
+      <!-- Game Cards Grid -->
+      <section class="game-grid" id="game-grid" aria-label="Game Database">
+        <!-- Injected via JavaScript -->
+      </section>
+    </main>
+
+  </div>
+
+  <!-- Flag Inaccuracy Modal -->
+  <div class="modal-backdrop" id="flag-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-dialog">
+      <h2 class="modal-title" id="modal-title">Report Data Inaccuracy</h2>
+      <p class="modal-desc" id="modal-game-target">Flagging accessibility data for review.</p>
+
+      <form id="flag-form">
+        <input type="hidden" id="flag-game-id">
+        <div class="form-group">
+          <label for="flag-issue-type" class="form-label">Inaccurate Feature / Category</label>
+          <select id="flag-issue-type" class="form-input">
+            <option value="remapping">Button Remapping mismatch</option>
+            <option value="qte">QTE bypass non-functional</option>
+            <option value="stick">Single-stick requirement changed</option>
+            <option value="hardware">Hardware adapter / switch setup issue</option>
+            <option value="trailer">Trailer or media link dead</option>
+            <option value="other">Other menu discrepancy</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="flag-notes" class="form-label">Details & Source URL / Citation</label>
+          <textarea id="flag-notes" class="form-textarea" rows="4" placeholder="Describe the discrepancy, game patch version, or provide a link to the updated menu settings..." required></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-reset" id="btn-cancel-modal">Cancel</button>
+          <button type="submit" class="btn-submit">Submit Flag</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Accessible Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    Flag received. Main Character Energy team will audit the settings menu!
+  </div>
+
+  <!-- ==========================================================================
+       APPLICATION LOGIC, GEMINI VISION API & SEED DATABASE
+       ========================================================================== -->
+  <script src="game-details-data.js"></script>
+  <script>
+    // VERIFIED 7-GAME SEED DATABASE WITH STRICT EXTERNAL LAUNCH URLs
+    const GAMES_DATA = [
+      {
+        id: "tlou1",
+        title: "The Last of Us Part I",
+        releaseYear: 2022,
+        platforms: ["PS5", "PC"],
+        genres: ["Action-Adventure", "Survival Horror"],
+        features: {
+          fullRemap: true,
+          holdToToggle: true,
+          qteBypass: true,
+          singleStick: true,
+          cameraLock: true,
+          speedScaling: true,
+          psAccess: true,
+          xac: true
+        },
+        highlights: [
+          "Individual stick direction remapping.",
+          "Converts sustained holds (Aim, Sprint, Crouch) to toggles.",
+          "Single-stick navigation assist + auto-target lock-on.",
+          "Combat aiming slow-motion slider down to 50%."
+        ],
+        hardwareCompatibility: ["PlayStation Access (Native)", "XAC (Copilot/Remap)"],
+        media: {
+          trailerId: "R2Ebc_OFeug",
+          watchUrl: "https://www.youtube.com/watch?v=R2Ebc_OFeug"
+        },
+        citationUrl: "https://caniplaythat.com/the-last-of-us-part-1-accessibility-review/"
+      },
+      {
+        id: "gowr",
+        title: "God of War Ragnarök",
+        releaseYear: 2022,
+        platforms: ["PS5", "PS4"],
+        genres: ["Action-Adventure", "Hack and Slash"],
+        features: {
+          fullRemap: true,
+          holdToToggle: true,
+          qteBypass: true,
+          singleStick: false,
+          cameraLock: true,
+          speedScaling: false,
+          psAccess: true,
+          xac: true
+        },
+        highlights: [
+          "Full controller button and touchpad rebinding.",
+          "Hold-to-sprint and aim toggles prevent finger strain.",
+          "Repeated button taps convert to single hold or auto-pass.",
+          "Puzzle timing window extensions and camera navigation guide."
+        ],
+        hardwareCompatibility: ["PlayStation Access (Native)", "XAC (Copilot)"],
+        media: {
+          trailerId: "hfJ4Km46A-0",
+          watchUrl: "https://www.youtube.com/watch?v=hfJ4Km46A-0"
+        },
+        citationUrl: "https://www.playstation.com/en-us/games/god-of-war-ragnarok/accessibility/"
+      },
+      {
+        id: "fh5",
+        title: "Forza Horizon 5",
+        releaseYear: 2021,
+        platforms: ["Xbox Series X/S", "Xbox One", "PC"],
+        genres: ["Racing", "Open World"],
+        features: {
+          fullRemap: true,
+          holdToToggle: true,
+          qteBypass: true,
+          singleStick: true,
+          cameraLock: false,
+          speedScaling: true,
+          psAccess: false,
+          xac: true
+        },
+        highlights: [
+          "Single-stick driving with Auto-Steering & Assisted Braking.",
+          "Offline game speed modifier down to 40% (0.4x) for reaction support.",
+          "Full custom controller mappings with up to 5 stored profiles.",
+          "Zero QTE mashing sequences required."
+        ],
+        hardwareCompatibility: ["Xbox Adaptive Controller (Native)", "Dual External Switch Setup"],
+        media: {
+          trailerId: "FYH9n37B7Yw",
+          watchUrl: "https://www.youtube.com/watch?v=FYH9n37B7Yw"
+        },
+        citationUrl: "https://caniplaythat.com/2021/11/04/forza-horizon-5-mobility-review/"
+      },
+      {
+        id: "celeste",
+        title: "Celeste",
+        releaseYear: 2018,
+        platforms: ["Nintendo Switch", "PC", "Xbox", "PS4"],
+        genres: ["Platformer", "Indie"],
+        features: {
+          fullRemap: true,
+          holdToToggle: true,
+          qteBypass: true,
+          singleStick: true,
+          cameraLock: false,
+          speedScaling: true,
+          psAccess: true,
+          xac: true
+        },
+        highlights: [
+          "Assist mode pioneer: game speed scaling slider (50% to 100%).",
+          "Infinite stamina toggle eliminating sustained grip overhead.",
+          "Invincibility and assist dash settings available at any moment.",
+          "Simplified digital directional controls compatible with all switch sets."
+        ],
+        hardwareCompatibility: ["PS Access Compatible", "Xbox Adaptive Controller Compatible"],
+        media: {
+          trailerId: "FqBj2IGg6Uw",
+          watchUrl: "https://www.youtube.com/watch?v=FqBj2IGg6Uw"
+        },
+        citationUrl: "https://caniplaythat.com/category/accessibility-reviews/"
+      },
+      {
+        id: "re9",
+        title: "Resident Evil 9 / Modern Benchmark",
+        releaseYear: 2026,
+        platforms: ["PS5", "PC", "Xbox Series X/S"],
+        genres: ["Survival Horror", "Action"],
+        features: {
+          fullRemap: true,
+          holdToToggle: true,
+          qteBypass: true,
+          singleStick: false,
+          cameraLock: true,
+          speedScaling: false,
+          psAccess: true,
+          xac: true
+        },
+        highlights: [
+          "Aim snap and aim follow assist tracking moving hostiles.",
+          "QTE struggle prompts convert from rapid button mash to single hold.",
+          "Custom stick deadzones and individual turn acceleration sliders.",
+          "Trigger resistance and heavy rumble vibration can be disabled."
+        ],
+        hardwareCompatibility: ["PS Access Supported", "Xbox Adaptive Controller Compatible"],
+        media: {
+          trailerId: "POz1-EmLsTY",
+          watchUrl: "https://www.youtube.com/watch?v=POz1-EmLsTY"
+        },
+        citationUrl: "https://caniplaythat.com/tag/resident-evil/"
+      },
+      {
+        id: "sf6",
+        title: "Street Fighter 6",
+        releaseYear: 2023,
+        platforms: ["PS5", "Xbox Series X/S", "PC"],
+        genres: ["Fighting", "Competitive"],
+        features: {
+          fullRemap: true,
+          holdToToggle: false,
+          qteBypass: true,
+          singleStick: false,
+          cameraLock: false,
+          speedScaling: false,
+          psAccess: true,
+          xac: true
+        },
+        highlights: [
+          "Modern Control Scheme collapses multi-directional inputs to single buttons.",
+          "Dynamic assist button automatically chains optimized combos.",
+          "Granular in-game button mapping for all fightsticks and switch boxes.",
+          "Audio spatial cues for opponent distance and drive gauge state."
+        ],
+        hardwareCompatibility: ["PS Access Native", "XAC Custom Switch Array"],
+        media: {
+          trailerId: "1INU3FOJsTw",
+          watchUrl: "https://www.youtube.com/watch?v=1INU3FOJsTw"
+        },
+        citationUrl: "https://caniplaythat.com/2023/06/02/street-fighter-6-accessibility-review/"
+      },
+      {
+        id: "acnh",
+        title: "Animal Crossing: New Horizons",
+        releaseYear: 2020,
+        platforms: ["Nintendo Switch"],
+        genres: ["Simulation", "Cozy"],
+        features: {
+          fullRemap: false,
+          holdToToggle: false,
+          qteBypass: true,
+          singleStick: true,
+          cameraLock: false,
+          speedScaling: false,
+          psAccess: false,
+          xac: true
+        },
+        highlights: [
+          "Low-intensity motor baseline: no rapid reaction checks or fail states.",
+          "Playable with single analog stick movement.",
+          "Relies on Nintendo Switch OS-level remapping for physical controllers.",
+          "Slow pacing eliminates fine dexterity strain."
+        ],
+        hardwareCompatibility: ["XAC via Mayflash/Switch Adapter", "Hori Flex Controller"],
+        media: {
+          trailerId: "_3YNL0OWio0",
+          watchUrl: "https://www.youtube.com/watch?v=_3YNL0OWio0"
+        },
+        citationUrl: "https://caniplaythat.com/2020/03/24/animal-crossing-new-horizons-accessibility-review/"
+      }
+    ];
+
+    // Catalog State
+    const state = {
+      search: "",
+      activeFilters: new Set()
+    };
+
+    // DOM References
+    const gameGrid = document.getElementById("game-grid");
+    const searchInput = document.getElementById("search-input");
+    const filterForm = document.getElementById("filter-form");
+    const btnResetFilters = document.getElementById("btn-reset-filters");
+    const resultsCount = document.getElementById("results-count");
+    
+    // Modal References
+    const flagModal = document.getElementById("flag-modal");
+    const flagGameTarget = document.getElementById("modal-game-target");
+    const flagGameId = document.getElementById("flag-game-id");
+    const flagForm = document.getElementById("flag-form");
+    const btnCancelModal = document.getElementById("btn-cancel-modal");
+    const toast = document.getElementById("toast");
+    let lastActiveElement = null;
+
+    // Vision Dropzone References
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("file-input");
+    const imagePreviewContainer = document.getElementById("image-preview-container");
+    const imagePreview = document.getElementById("image-preview");
+    const previewFilename = document.getElementById("preview-filename");
+    const statusDot = document.getElementById("status-dot");
+    const visionStatusLabel = document.getElementById("vision-status-label");
+    const visionConfidence = document.getElementById("vision-confidence");
+    const visionContent = document.getElementById("vision-content");
+    const visionActions = document.getElementById("vision-actions");
+    const btnAddToCatalog = document.getElementById("btn-add-to-catalog");
+    const btnToggleSchema = document.getElementById("btn-toggle-schema");
+    const rawSchema = document.getElementById("raw-schema");
+    const btnSampleZelda = document.getElementById("btn-sample-zelda");
+    const btnSampleSpiderman = document.getElementById("btn-sample-spiderman");
+    const btnSampleStarfield = document.getElementById("btn-sample-starfield");
+    const geminiApiKeyInput = document.getElementById("gemini-api-key");
+    const btnSaveKey = document.getElementById("btn-save-key");
+    const rememberKeyCheckbox = document.getElementById("remember-key-checkbox");
+    const keyStatusIndicator = document.getElementById("key-status-indicator");
+
+    let currentAnalyzedGame = null;
+    let storedBase64Image = null;
+    let storedMimeType = null;
+
+    // Initialize API Key from storage if present
+    const savedKey = localStorage.getItem("gemini_hub_api_key");
+    if (savedKey) {
+      geminiApiKeyInput.value = savedKey;
+      rememberKeyCheckbox.checked = true;
+      keyStatusIndicator.textContent = "Mode: Custom Gemini Vision API Key Active";
+      keyStatusIndicator.style.color = "#38bdf8";
+    }
+
+    btnSaveKey.addEventListener("click", () => {
+      const val = geminiApiKeyInput.value.trim();
+      if (rememberKeyCheckbox.checked) {
+        localStorage.setItem("gemini_hub_api_key", val);
+      } else {
+        localStorage.removeItem("gemini_hub_api_key");
+      }
+      if (val) {
+        keyStatusIndicator.textContent = "Mode: Custom Gemini Vision API Key Active";
+        keyStatusIndicator.style.color = "#38bdf8";
+        showToast("Gemini API key saved for live multimodal inference.");
+      } else {
+        keyStatusIndicator.textContent = "Mode: Built-in AI Vision";
+        keyStatusIndicator.style.color = "var(--text-subtle)";
+        showToast("Using the built-in AI vision service.");
+      }
+    });
+
+    // Helper: Escape HTML
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Render Catalog
+    function renderCatalog() {
+      const filtered = GAMES_DATA.filter(game => {
+        const q = state.search.toLowerCase();
+        const matchesSearch = !q || 
+          game.title.toLowerCase().includes(q) ||
+          game.genres.some(g => g.toLowerCase().includes(q)) ||
+          game.platforms.some(p => p.toLowerCase().includes(q));
+
+        if (!matchesSearch) return false;
+        for (const filterKey of state.activeFilters) {
+          if (!game.features[filterKey]) return false;
+        }
+        return true;
+      });
+
+      resultsCount.textContent = `Showing ${filtered.length} of ${GAMES_DATA.length} verified seed titles`;
+      const filterCountBadge = document.getElementById("active-filter-count");
+      if (filterCountBadge) {
+        const n = state.activeFilters.size;
+        filterCountBadge.textContent = n ? `${n} active` : "";
+        filterCountBadge.style.display = n ? "inline-flex" : "none";
+      }
+
+      if (filtered.length === 0) {
+        gameGrid.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-subtle);">
+            <p style="font-size: 1.125rem; font-weight: 700; color: var(--text-main);">No matching games found.</p>
+            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-top: 0.5rem;">Try unchecking some motor criteria or clearing your search term.</p>
+          </div>
+        `;
+        return;
+      }
+
+      gameGrid.innerHTML = filtered.map(game => {
+        const thumbUrl = `https://img.youtube.com/vi/${game.media.trailerId}/hqdefault.jpg`;
+        const newlyAddedClass = game.isNewlyAdded ? " newly-added" : "";
+        const hasDetails = !game.isNewlyAdded && window.GAME_DETAILS && window.GAME_DETAILS[game.id];
+        const detailsUrl = `game.html?id=${encodeURIComponent(game.id)}`;
+        const thumbImg = `<img 
+                src="${thumbUrl}" 
+                alt="${escapeHtml(game.title)} gameplay preview" 
+                class="trailer-preview-thumb" 
+                loading="lazy"
+                onerror="this.style.display='none'"
+              >`;
+
+        return `
+          <article class="game-card${newlyAddedClass}" aria-labelledby="card-title-${game.id}">
+            <div>
+              <div class="card-title" id="card-title-${game.id}">
+                <span>${escapeHtml(game.title)}</span>
+                ${game.isNewlyAdded ? `<span class="sprint-badge" style="background:#7e22ce;font-size:0.7rem;">AI Verified</span>` : ''}
+              </div>
+              <div class="card-meta">
+                <span>${game.releaseYear}</span>
+                <span>•</span>
+                <span>${game.genres.join(", ")}</span>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                ${game.platforms.map(p => `<span class="platform-pill">${escapeHtml(p)}</span>`).join("")}
+              </div>
+
+              <ul class="features-list">
+                ${game.highlights.map(hl => `
+                  <li class="feature-item">
+                    <span class="feature-icon" aria-hidden="true">✓</span>
+                    <span>${escapeHtml(hl)}</span>
+                  </li>
+                `).join("")}
+              </ul>
+
+              <div class="hardware-tags" aria-label="Adaptive Hardware Validations">
+                ${game.hardwareCompatibility.map(hw => `
+                  <span class="hardware-tag">⚡ ${escapeHtml(hw)}</span>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="trailer-actions">
+              ${hasDetails ? `<a href="${detailsUrl}" class="thumb-link" aria-label="Open ${escapeHtml(game.title)} details and player opinions">${thumbImg}<span class="thumb-cta" aria-hidden="true">View details →</span></a>` : thumbImg}
+              ${hasDetails ? `<a href="${detailsUrl}" class="btn-details">View Details &amp; Player Opinions <span aria-hidden="true">→</span></a>` : ''}
+              <a 
+                href="${game.media.watchUrl}" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="btn-trailer-launch"
+                aria-label="Watch ${escapeHtml(game.title)} gameplay trailer on YouTube (opens in a new tab)">
+                <span aria-hidden="true">▶</span> Watch Gameplay Trailer <span aria-hidden="true">↗</span>
+              </a>
+              <div class="card-footer">
+                <a href="${game.citationUrl}" target="_blank" rel="noopener noreferrer" class="citation-link" aria-label="Review audit citations for ${escapeHtml(game.title)}">
+                  Citations / CIPT Audit ↗
+                </a>
+                <button type="button" class="btn-flag" data-id="${game.id}" data-title="${escapeHtml(game.title)}">
+                  Flag Inaccuracy
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      document.querySelectorAll(".btn-flag").forEach(btn => {
+        btn.addEventListener("click", () => {
+          openFlagModal(btn.getAttribute("data-id"), btn.getAttribute("data-title"), btn);
+        });
+      });
+    }
+
+    // ==========================================================================
+    // 3-LAYER MULTIMODAL PROMPT DEFINITION & LIVE GEMINI API ENGINE
+    // ==========================================================================
+    const SYSTEM_INSTRUCTION_3_LAYER = `
+You are the Lead Accessibility Vision Auditor for "Gaming The System" (CodeSquad Sprint, Team Main Character Energy).
+Mandate: HIGH ACCURACY OVER SPEED. Gamers with physical motor challenges risk wasting up to $70 on unplayable games.
+Examine the image (settings menu, HUD, or box art) against standardized motor taxonomies:
+1. Game Title & Verified Platforms (PS5, PS4, Xbox, Switch, PC).
+2. Motor features:
+   - full_button_remapping (true/false)
+   - hold_to_toggle_inputs (true/false)
+   - qte_alternatives (true/false)
+   - single_stick_playable (true/false)
+   - camera_assist (true/false)
+   - gameplay_speed_scaling (true/false)
+3. Hardware profile: Xbox Adaptive Controller (XAC) and PlayStation Access Controller support.
+4. YouTube Trailer ID: suggest a valid YouTube trailer ID or official trailer for this game if known.
+Return strictly the JSON schema requested.
+`;
+
+    const PROMPT_USER_QUERY = `
+Analyze this game screenshot or cover art. Extract the exact title, motor accessibility accommodations, adaptive controller compatibility, and confidence rating.
+Output MUST strictly conform to JSON format:
+{
+  "vision_analysis": {
+    "image_classification": "settings_menu" | "box_art" | "gameplay_hud",
+    "identified_game": {
+      "title": "String",
+      "release_year": 2023,
+      "platforms_detected": ["String"],
+      "confidence_score": 0.95,
+      "suggested_trailer_id": "String"
+    },
+    "verified_motor_features": {
+      "full_button_remapping": { "status": boolean, "visual_evidence": "String" },
+      "hold_to_toggle_inputs": { "status": boolean, "visual_evidence": "String" },
+      "qte_alternatives": { "status": boolean, "visual_evidence": "String" },
+      "single_stick_playable": { "status": boolean, "visual_evidence": "String" },
+      "camera_assist": { "status": boolean, "visual_evidence": "String" },
+      "gameplay_speed_scaling": { "status": boolean, "visual_evidence": "String" }
+    },
+    "adaptive_hardware_profile": {
+      "xbox_adaptive_controller": "Native Plug-and-Play" | "Supported via Copilot" | "Requires Adapter" | "Untested",
+      "playstation_access_controller": "Native Support" | "Supported via Secondary Pairing" | "Requires Adapter" | "Untested",
+      "recommended_setup_notes": "String"
+    },
+    "audit_confidence": {
+      "rating": "High" | "Medium" | "Low",
+      "requires_manual_verification": boolean,
+      "audit_notes": "String"
+    }
+  }
+}
+`;
+
+    // VERIFIED BENCHMARK CATALOG ENTRIES FOR OFFLINE / FALLBACK
+    const OFFLINE_BENCHMARKS = {
+      zelda: {
+        raw_schema: {
+          "vision_analysis": {
+            "image_classification": "box_art",
+            "identified_game": {
+              "title": "The Legend of Zelda: Ocarina of Time 3D",
+              "release_year": 2011,
+              "platforms_detected": ["Nintendo 3DS"],
+              "confidence_score": 0.98,
+              "suggested_trailer_id": "Jfg6RfClZJg"
+            },
+            "verified_motor_features": {
+              "full_button_remapping": {
+                "status": false,
+                "visual_evidence": "Touch screen assigns inventory items; physical controls not natively rebindable."
+              },
+              "hold_to_toggle_inputs": {
+                "status": true,
+                "visual_evidence": "Z/L-Targeting offers 'Switch' toggle mode as well as 'Hold' in options."
+              },
+              "qte_alternatives": {
+                "status": true,
+                "visual_evidence": "No rapid dexterity-gate QTE sequences required to complete the story."
+              },
+              "single_stick_playable": {
+                "status": true,
+                "visual_evidence": "Playable with single Circle Pad + touch triggers; gyro aiming is fully optional."
+              },
+              "camera_assist": {
+                "status": true,
+                "visual_evidence": "Z-Targeting locks camera and aligns player orientation instantly."
+              },
+              "gameplay_speed_scaling": {
+                "status": false,
+                "visual_evidence": "No global game speed or tick rate modifiers present."
+              }
+            },
+            "adaptive_hardware_profile": {
+              "xbox_adaptive_controller": "Requires Adapter",
+              "playstation_access_controller": "Untested",
+              "recommended_setup_notes": "Playable on Nintendo Switch via NSO with external switch adapters or 3DS grip extensions."
+            },
+            "audit_confidence": {
+              "rating": "High",
+              "requires_manual_verification": false,
+              "audit_notes": "Verified against Nintendo 3DS remade release controls & lock-on switch mechanics."
+            }
+          }
+        },
+        catalog_entry: {
+          id: "oot3d",
+          title: "The Legend of Zelda: Ocarina of Time 3D",
+          releaseYear: 2011,
+          platforms: ["Nintendo 3DS", "Nintendo Switch (NSO)"],
+          genres: ["Action-Adventure", "Fantasy"],
+          features: {
+            fullRemap: false,
+            holdToToggle: true,
+            qteBypass: true,
+            singleStick: true,
+            cameraLock: true,
+            speedScaling: false,
+            psAccess: false,
+            xac: true
+          },
+          highlights: [
+            "Z/L-Targeting converts lock-on and camera follow from hold to toggle.",
+            "Gyroscope motion controls can be disabled in favor of analog circle pad.",
+            "Touch screen provides large tactile targets for item shortcuts.",
+            "Single-stick playable navigation with auto-jumping mechanics."
+          ],
+          hardwareCompatibility: ["XAC via Mayflash/Switch Adapter", "Hori Switch Flex"],
+          media: {
+            trailerId: "Jfg6RfClZJg",
+            watchUrl: "https://www.youtube.com/watch?v=Jfg6RfClZJg"
+          },
+          citationUrl: "https://caniplaythat.com/category/accessibility-reviews/",
+          isNewlyAdded: true
+        }
+      },
+      spiderman: {
+        raw_schema: {
+          "vision_analysis": {
+            "image_classification": "settings_menu",
+            "identified_game": {
+              "title": "Marvel's Spider-Man 2",
+              "release_year": 2023,
+              "platforms_detected": ["PS5"],
+              "confidence_score": 0.99,
+              "suggested_trailer_id": "qIQ3xNqkOY4"
+            },
+            "verified_motor_features": {
+              "full_button_remapping": {
+                "status": true,
+                "visual_evidence": "Button mapping subtree visible with custom layout slots."
+              },
+              "hold_to_toggle_inputs": {
+                "status": true,
+                "visual_evidence": "Continuous web zip & sprint toggles verified."
+              },
+              "qte_alternatives": {
+                "status": true,
+                "visual_evidence": "QTE Autocomplete switch confirmed active."
+              },
+              "single_stick_playable": {
+                "status": true,
+                "visual_evidence": "Chase assist and corner tethering auto-centers motion."
+              },
+              "camera_assist": {
+                "status": true,
+                "visual_evidence": "Combat camera follow & lock-on snap toggles verified."
+              },
+              "gameplay_speed_scaling": {
+                "status": true,
+                "visual_evidence": "Game Speed slider active at 70%, 50%, 30%."
+              }
+            },
+            "adaptive_hardware_profile": {
+              "xbox_adaptive_controller": "Supported via Copilot",
+              "playstation_access_controller": "Native Support",
+              "recommended_setup_notes": "Dual PS Access pairing or Single Access with custom stick extension."
+            },
+            "audit_confidence": {
+              "rating": "High",
+              "requires_manual_verification": false,
+              "audit_notes": "Verified directly from Insomniac Games Accessibility preset menu."
+            }
+          }
+        },
+        catalog_entry: {
+          id: "spiderman2",
+          title: "Marvel's Spider-Man 2",
+          releaseYear: 2023,
+          platforms: ["PS5"],
+          genres: ["Action-Adventure", "Superhero"],
+          features: {
+            fullRemap: true,
+            holdToToggle: true,
+            qteBypass: true,
+            singleStick: true,
+            cameraLock: true,
+            speedScaling: true,
+            psAccess: true,
+            xac: true
+          },
+          highlights: [
+            "Game speed reduction sliders (70%, 50%, 30%).",
+            "QTE autocomplete and swing steering assist.",
+            "Complete button remapping & shortcut assignments.",
+            "Continuous hold to toggle for traversal and combat charges."
+          ],
+          hardwareCompatibility: ["PlayStation Access (Native)", "XAC (Via Adapter)"],
+          media: {
+            trailerId: "qIQ3xNqkOY4",
+            watchUrl: "https://www.youtube.com/watch?v=qIQ3xNqkOY4"
+          },
+          citationUrl: "https://caniplaythat.com/2023/10/16/marvels-spider-man-2-accessibility-review/",
+          isNewlyAdded: true
+        }
+      },
+      starfield: {
+        raw_schema: {
+          "vision_analysis": {
+            "image_classification": "box_art",
+            "identified_game": {
+              "title": "Starfield",
+              "release_year": 2023,
+              "platforms_detected": ["Xbox Series X/S", "PC"],
+              "confidence_score": 0.94,
+              "suggested_trailer_id": "pYqyVpMX-3o"
+            },
+            "verified_motor_features": {
+              "full_button_remapping": {
+                "status": true,
+                "visual_evidence": "Full in-game controller remapping documented."
+              },
+              "hold_to_toggle_inputs": {
+                "status": true,
+                "visual_evidence": "Sprint & aim toggle documented in baseline Bethesda controls."
+              },
+              "qte_alternatives": {
+                "status": true,
+                "visual_evidence": "No rapid dexterity QTE failure gates."
+              },
+              "single_stick_playable": {
+                "status": false,
+                "visual_evidence": "Dual analog flight and FPS gunplay require two sticks."
+              },
+              "camera_assist": {
+                "status": true,
+                "visual_evidence": "Auto-aim target tracking in ship combat."
+              },
+              "gameplay_speed_scaling": {
+                "status": false,
+                "visual_evidence": "No in-engine gameplay speed sliders."
+              }
+            },
+            "adaptive_hardware_profile": {
+              "xbox_adaptive_controller": "Native Plug-and-Play",
+              "playstation_access_controller": "Requires Adapter",
+              "recommended_setup_notes": "Native Xbox Adaptive Controller integration with dual thumbsticks."
+            },
+            "audit_confidence": {
+              "rating": "Medium",
+              "requires_manual_verification": true,
+              "audit_notes": "Box art identified title; motor flags referenced from patch 1.11.36 accessibility matrix."
+            }
+          }
+        },
+        catalog_entry: {
+          id: "starfield",
+          title: "Starfield",
+          releaseYear: 2023,
+          platforms: ["Xbox Series X/S", "PC"],
+          genres: ["Action RPG", "Sci-Fi"],
+          features: {
+            fullRemap: true,
+            holdToToggle: true,
+            qteBypass: true,
+            singleStick: false,
+            cameraLock: true,
+            speedScaling: false,
+            psAccess: false,
+            xac: true
+          },
+          highlights: [
+            "Target tracking auto-aim in dogfight and ground combat.",
+            "Full Xbox controller remapping profiles.",
+            "Aim and sprint toggle options.",
+            "Native Xbox Adaptive Controller plug-and-play."
+          ],
+          hardwareCompatibility: ["Xbox Adaptive Controller (Native)", "External 3.5mm Switches"],
+          media: {
+            trailerId: "pYqyVpMX-3o",
+            watchUrl: "https://www.youtube.com/watch?v=pYqyVpMX-3o"
+          },
+          citationUrl: "https://caniplaythat.com/category/accessibility-reviews/",
+          isNewlyAdded: true
+        }
+      }
+    };
+
+    // Live Gemini Vision API Call with exponential backoff
+    async function callGeminiVision(base64Data, mimeType, userKey = "") {
+      // No personal key: use the app's built-in AI service (server-side)
+      if (!userKey) {
+        const res = await fetch("/api/vision", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: SYSTEM_INSTRUCTION_3_LAYER,
+            prompt: PROMPT_USER_QUERY,
+            base64Data,
+            mimeType
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || `Vision audit failed (status ${res.status})`);
+        return data.result;
+      }
+      const apiKey = userKey;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const payload = {
+        contents: [
+          {
+            role: "user",
+            parts: [
+              { text: PROMPT_USER_QUERY },
+              {
+                inlineData: {
+                  mimeType: mimeType || "image/jpeg",
+                  data: base64Data
+                }
+              }
+            ]
+          }
+        ],
+        systemInstruction: {
+          parts: [{ text: SYSTEM_INSTRUCTION_3_LAYER }]
+        },
+        generationConfig: {
+          responseMimeType: "application/json"
+        }
+      };
+
+      const delays = [1000, 2000, 4000];
+      for (let attempt = 0; attempt <= delays.length; attempt++) {
+        try {
+          const res = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          const data = await res.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            return JSON.parse(text);
+          }
+          throw new Error("No text response from model");
+        } catch (err) {
+          if (attempt === delays.length) throw err;
+          await new Promise(r => setTimeout(r, delays[attempt]));
+        }
+      }
+    }
+
+    // Process & Render Vision Output
+    function displayVisionResult(rawAnalysis, customTrailerId = null) {
+      const analysis = rawAnalysis.vision_analysis;
+      const title = analysis.identified_game.title;
+      const trailerId = customTrailerId || analysis.identified_game.suggested_trailer_id || "R2Ebc_OFeug";
+
+      // Build Catalog Entry
+      const entryId = "ai_" + title.toLowerCase().replace(/[^a-z0-9]/g, "_").slice(0, 16);
+      currentAnalyzedGame = {
+        id: entryId,
+        title: title,
+        releaseYear: analysis.identified_game.release_year || 2023,
+        platforms: analysis.identified_game.platforms_detected || ["Multiplatform"],
+        genres: ["Accessibility Audited"],
+        features: {
+          fullRemap: Boolean(analysis.verified_motor_features?.full_button_remapping?.status),
+          holdToToggle: Boolean(analysis.verified_motor_features?.hold_to_toggle_inputs?.status),
+          qteBypass: Boolean(analysis.verified_motor_features?.qte_alternatives?.status),
+          singleStick: Boolean(analysis.verified_motor_features?.single_stick_playable?.status),
+          cameraLock: Boolean(analysis.verified_motor_features?.camera_assist?.status),
+          speedScaling: Boolean(analysis.verified_motor_features?.gameplay_speed_scaling?.status),
+          psAccess: (analysis.adaptive_hardware_profile?.playstation_access_controller || "").toLowerCase().includes("native") || (analysis.adaptive_hardware_profile?.playstation_access_controller || "").toLowerCase().includes("support"),
+          xac: (analysis.adaptive_hardware_profile?.xbox_adaptive_controller || "").toLowerCase().includes("native") || (analysis.adaptive_hardware_profile?.xbox_adaptive_controller || "").toLowerCase().includes("copilot") || (analysis.adaptive_hardware_profile?.xbox_adaptive_controller || "").toLowerCase().includes("support")
+        },
+        highlights: [
+          analysis.verified_motor_features?.full_button_remapping?.visual_evidence || "Button remapping verified.",
+          analysis.verified_motor_features?.hold_to_toggle_inputs?.visual_evidence || "Hold-to-toggle settings analyzed.",
+          analysis.verified_motor_features?.qte_alternatives?.visual_evidence || "QTE bypass state verified.",
+          analysis.adaptive_hardware_profile?.recommended_setup_notes || "Profiled for standard adaptive controller configurations."
+        ],
+        hardwareCompatibility: [
+          `PS Access: ${analysis.adaptive_hardware_profile?.playstation_access_controller || 'Untested'}`,
+          `XAC: ${analysis.adaptive_hardware_profile?.xbox_adaptive_controller || 'Untested'}`
+        ],
+        media: {
+          trailerId: trailerId,
+          watchUrl: `https://www.youtube.com/watch?v=${trailerId}`
+        },
+        citationUrl: "https://caniplaythat.com/category/accessibility-reviews/",
+        isNewlyAdded: true
+      };
+
+      statusDot.className = "status-dot complete";
+      visionStatusLabel.textContent = `Identified: ${title}`;
+      visionConfidence.textContent = `Confidence: ${(analysis.identified_game.confidence_score * 100).toFixed(0)}% (${analysis.audit_confidence.rating})`;
+
+      rawSchema.textContent = JSON.stringify(rawAnalysis, null, 2);
+
+      const feats = analysis.verified_motor_features || {};
+
+      visionContent.innerHTML = `
+        <div style="margin-top: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.875rem; font-weight: 700; color: var(--text-main);">
+              Classification: <span style="color: var(--primary); text-transform: uppercase;">${escapeHtml(analysis.image_classification)}</span>
+            </span>
+            <span style="font-size: 0.75rem; color: var(--text-subtle);">
+              Platforms: ${(analysis.identified_game.platforms_detected || []).join(", ")}
+            </span>
+          </div>
+
+          <div style="margin-bottom: 0.75rem;">
+            <div style="font-size: 0.8125rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.35rem;">
+              Verified Motor Accommodations:
+            </div>
+            <div>
+              <span class="parsed-badge ${feats.full_button_remapping?.status ? 'badge-detected' : 'badge-absent'}">
+                ${feats.full_button_remapping?.status ? '✓' : '✗'} Button Remap
+              </span>
+              <span class="parsed-badge ${feats.hold_to_toggle_inputs?.status ? 'badge-detected' : 'badge-absent'}">
+                ${feats.hold_to_toggle_inputs?.status ? '✓' : '✗'} Hold-to-Toggle
+              </span>
+              <span class="parsed-badge ${feats.qte_alternatives?.status ? 'badge-detected' : 'badge-absent'}">
+                ${feats.qte_alternatives?.status ? '✓' : '✗'} QTE Bypass
+              </span>
+              <span class="parsed-badge ${feats.single_stick_playable?.status ? 'badge-detected' : 'badge-absent'}">
+                ${feats.single_stick_playable?.status ? '✓' : '✗'} Single-Stick
+              </span>
+              <span class="parsed-badge ${feats.camera_assist?.status ? 'badge-detected' : 'badge-absent'}">
+                ${feats.camera_assist?.status ? '✓' : '✗'} Camera Assist
+              </span>
+              <span class="parsed-badge ${feats.gameplay_speed_scaling?.status ? 'badge-detected' : 'badge-absent'}">
+                ${feats.gameplay_speed_scaling?.status ? '✓' : '✗'} Speed Sliders
+              </span>
+            </div>
+          </div>
+
+          <div style="background: rgba(30, 41, 59, 0.7); padding: 0.6rem; border-radius: var(--radius-sm); border-left: 3px solid var(--primary); margin-bottom: 0.5rem;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main);">
+              Adaptive Controller Profile:
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+              PS Access: <strong style="color:#ffffff;">${escapeHtml(analysis.adaptive_hardware_profile?.playstation_access_controller || 'Untested')}</strong> • 
+              XAC: <strong style="color:#ffffff;">${escapeHtml(analysis.adaptive_hardware_profile?.xbox_adaptive_controller || 'Untested')}</strong>
+            </div>
+          </div>
+        </div>
+      `;
+
+      visionActions.style.display = "flex";
+      showToast(`Vision audit complete: ${title} parsed successfully!`);
+    }
+
+    // Orchestrator: Try Live Gemini API; if no key or error, use smart benchmark heuristics
+    async function executeAudit(filename = "", benchmarkKey = null) {
+      statusDot.className = "status-dot scanning";
+      visionStatusLabel.textContent = "Executing 3-Layer Multimodal Vision Audit...";
+      visionConfidence.textContent = "Scanning...";
+      visionActions.style.display = "none";
+      rawSchema.classList.remove("visible");
+
+      visionContent.innerHTML = `
+        <div style="padding: 1.5rem 0; text-align: center;">
+          <div style="font-size: 1.125rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">
+            Analyzing image against motor accessibility taxonomy...
+          </div>
+          <p style="font-size: 0.8125rem; color: var(--text-muted);">
+            Layer 1: Persona & Verification • Layer 2: Motor Mapping • Layer 3: Strict Schema Output
+          </p>
+        </div>
+      `;
+
+      const userKey = geminiApiKeyInput.value.trim();
+
+      // If user provided a custom key or we have an inline base64 image, attempt Live Gemini call
+      if (storedBase64Image) {
+        try {
+          const liveResult = await callGeminiVision(storedBase64Image, storedMimeType, userKey);
+          if (liveResult && liveResult.vision_analysis) {
+            displayVisionResult(liveResult);
+            return;
+          }
+          throw new Error("The AI response did not match the expected audit format.");
+        } catch (e) {
+          console.error("Vision audit error:", e);
+          statusDot.className = "status-dot";
+          visionStatusLabel.textContent = "Audit failed";
+          visionConfidence.textContent = "";
+          visionContent.innerHTML = `<div style="padding: 1.5rem 0; text-align: center; color: #f87171;">${escapeHtml(e.message || "Vision audit failed.")}<br><span style="font-size:0.8125rem; color: var(--text-muted);">Please try again or use a different image.</span></div>`;
+          showToast("Vision audit failed — see details above.");
+          return;
+        }
+      }
+
+      // Smart Offline Classifier Heuristics
+      await new Promise(r => setTimeout(r, 600)); // Simulate inference pacing
+
+      const name = (filename || "").toLowerCase();
+      let key = benchmarkKey;
+      if (!key) {
+        if (name.includes("zelda") || name.includes("ocarina") || name.includes("oot") || name.includes("link")) {
+          key = "zelda";
+        } else if (name.includes("star") || name.includes("bethesda")) {
+          key = "starfield";
+        } else {
+          key = "spiderman";
+        }
+      }
+
+      const benchmark = OFFLINE_BENCHMARKS[key] || OFFLINE_BENCHMARKS["spiderman"];
+      displayVisionResult(benchmark.raw_schema, benchmark.catalog_entry.media.trailerId);
+    }
+
+    // File selection handler
+    function handleFileSelection(file) {
+      if (!file.type.startsWith("image/")) {
+        showToast("Please upload an image file (PNG, JPG, or WEBP).");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const fullDataUrl = evt.target.result;
+        imagePreview.src = fullDataUrl;
+        previewFilename.textContent = `File: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        imagePreviewContainer.style.display = "block";
+
+        // Store pure base64 data for live API
+        storedMimeType = file.type;
+        storedBase64Image = fullDataUrl.split(",")[1];
+
+        executeAudit(file.name);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Dropzone Events
+    dropzone.addEventListener("click", () => fileInput.click());
+    dropzone.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
+
+    dropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropzone.classList.add("dragover");
+    });
+
+    dropzone.addEventListener("dragleave", () => {
+      dropzone.classList.remove("dragover");
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("dragover");
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFileSelection(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleFileSelection(e.target.files[0]);
+      }
+    });
+
+    // Sample Audit Buttons
+    btnSampleZelda.addEventListener("click", () => {
+      storedBase64Image = null;
+      imagePreview.src = "https://img.youtube.com/vi/Jfg6RfClZJg/hqdefault.jpg";
+      previewFilename.textContent = "Sample: zelda_ocarina_of_time_3d_boxart.jpg";
+      imagePreviewContainer.style.display = "block";
+      executeAudit("zelda_ocarina.jpg", "zelda");
+    });
+
+    btnSampleSpiderman.addEventListener("click", () => {
+      storedBase64Image = null;
+      imagePreview.src = "https://img.youtube.com/vi/qIQ3xNqkOY4/hqdefault.jpg";
+      previewFilename.textContent = "Sample: spiderman2_accessibility_menu.png";
+      imagePreviewContainer.style.display = "block";
+      executeAudit("spiderman2.png", "spiderman");
+    });
+
+    btnSampleStarfield.addEventListener("click", () => {
+      storedBase64Image = null;
+      imagePreview.src = "https://img.youtube.com/vi/pYqyVpMX-3o/hqdefault.jpg";
+      previewFilename.textContent = "Sample: starfield_cover_art.jpg";
+      imagePreviewContainer.style.display = "block";
+      executeAudit("starfield.jpg", "starfield");
+    });
+
+    // Toggle Raw Schema
+    btnToggleSchema.addEventListener("click", () => {
+      rawSchema.classList.toggle("visible");
+      btnToggleSchema.textContent = rawSchema.classList.contains("visible") 
+        ? "{ } Hide Strict JSON Contract" 
+        : "{ } View Strict JSON Contract";
+    });
+
+    // Add Analyzed Game to Catalog
+    btnAddToCatalog.addEventListener("click", () => {
+      if (!currentAnalyzedGame) return;
+      
+      const exists = GAMES_DATA.some(g => g.id === currentAnalyzedGame.id);
+      if (exists) {
+        showToast(`${currentAnalyzedGame.title} is already active in your catalog!`);
+        return;
+      }
+
+      GAMES_DATA.unshift(currentAnalyzedGame);
+      renderCatalog();
+      showToast(`Added ${currentAnalyzedGame.title} to live catalog!`);
+      
+      // Smooth scroll to newly added card
+      const targetCard = document.getElementById(`card-title-${currentAnalyzedGame.id}`);
+      if (targetCard) {
+        targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    });
+
+    // ==========================================================================
+    // FILTERING, SEARCH, & MODAL LOGIC
+    // ==========================================================================
+    filterForm.addEventListener("change", (e) => {
+      const checkbox = e.target;
+      if (checkbox.checked) {
+        state.activeFilters.add(checkbox.value);
+      } else {
+        state.activeFilters.delete(checkbox.value);
+      }
+      renderCatalog();
+    });
+
+    searchInput.addEventListener("input", (e) => {
+      state.search = e.target.value.trim();
+      renderCatalog();
+    });
+
+    btnResetFilters.addEventListener("click", () => {
+      filterForm.reset();
+      searchInput.value = "";
+      state.search = "";
+      state.activeFilters.clear();
+      renderCatalog();
+      searchInput.focus();
+    });
+
+    // ==========================================================================
+    // COLLAPSIBLE PANELS (VISION AUDITOR + MOTOR FILTERS)
+    // ==========================================================================
+    const btnToggleVision = document.getElementById("btn-toggle-vision");
+    const visionPanel = document.getElementById("vision-panel");
+    const visionSection = document.getElementById("vision-section");
+    const visionToggleLabel = document.getElementById("vision-toggle-label");
+    if (btnToggleVision && visionPanel) {
+      btnToggleVision.addEventListener("click", () => {
+        const open = visionPanel.hidden;
+        visionPanel.hidden = !open;
+        visionSection.classList.toggle("is-collapsed", !open);
+        btnToggleVision.setAttribute("aria-expanded", String(open));
+        if (visionToggleLabel) visionToggleLabel.textContent = open ? "Hide Auditor" : "Open Auditor";
+      });
+    }
+
+    const btnToggleFilters = document.getElementById("btn-toggle-filters");
+    const btnCloseFilters = document.getElementById("btn-close-filters");
+    const filterSidebar = document.getElementById("filter-sidebar");
+    const appLayout = document.getElementById("app-layout");
+    const filtersToggleLabel = document.getElementById("filters-toggle-label");
+    function setFiltersOpen(open) {
+      filterSidebar.hidden = !open;
+      appLayout.classList.toggle("filters-collapsed", !open);
+      btnToggleFilters.setAttribute("aria-expanded", String(open));
+      if (filtersToggleLabel) filtersToggleLabel.textContent = open ? "Hide Motor Filters" : "Show Motor Filters";
+      if (open) {
+        if (!filterSidebar.hasAttribute("tabindex")) filterSidebar.setAttribute("tabindex", "-1");
+        filterSidebar.focus();
+      } else {
+        btnToggleFilters.focus();
+      }
+    }
+    if (btnToggleFilters && filterSidebar && appLayout) {
+      btnToggleFilters.addEventListener("click", () => setFiltersOpen(filterSidebar.hidden));
+      if (btnCloseFilters) btnCloseFilters.addEventListener("click", () => setFiltersOpen(false));
+    }
+
+    function openFlagModal(id, title, triggerBtn) {
+      lastActiveElement = triggerBtn;
+      flagGameId.value = id;
+      flagGameTarget.textContent = `Reporting menu or setting discrepancy for: ${title}`;
+      flagModal.classList.add("open");
+      document.getElementById("flag-issue-type").focus();
+    }
+
+    function closeFlagModal() {
+      flagModal.classList.remove("open");
+      flagForm.reset();
+      if (lastActiveElement) {
+        lastActiveElement.focus();
+      }
+    }
+
+    btnCancelModal.addEventListener("click", closeFlagModal);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && flagModal.classList.contains("open")) {
+        closeFlagModal();
+      }
+    });
+
+    flagForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      closeFlagModal();
+      showToast("Flag received. Main Character Energy team will audit the settings menu!");
+    });
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.style.display = "block";
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 4000);
+    }
+
+    // Initial Catalog Rendering
+    renderCatalog();
+  </script>
+</body>
+</html>
