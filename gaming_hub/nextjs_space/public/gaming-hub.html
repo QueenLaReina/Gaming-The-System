@@ -792,34 +792,6 @@
       font-size: 0.75rem;
       font-weight: 600;
     }
-    .platform-rating-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.75rem;
-    }
-    .platform-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-    }
-    .esrb-rating-badge {
-      display: block;
-      width: 40px;
-      height: 60px;
-      flex: 0 0 auto;
-      object-fit: contain;
-      background: #fff;
-      border-radius: 2px;
-    }
-    .esrb-rating-missing {
-      align-self: flex-start;
-      color: var(--text-subtle);
-      font-size: 0.7rem;
-      line-height: 1.25;
-      max-width: 5.5rem;
-    }
-
     .features-list {
       list-style: none;
       margin: 1rem 0;
@@ -1842,7 +1814,8 @@
         const newlyAddedClass = game.isNewlyAdded ? " newly-added" : "";
         const hasDetails = !game.isNewlyAdded && window.GAME_DETAILS && window.GAME_DETAILS[game.id];
         const detailsUrl = `game.html?id=${encodeURIComponent(game.id)}`;
-        const esrbRating = ESRB_RATING_ICONS[game.esrbRating] ? game.esrbRating : "Not provided";
+        const esrbRating = game.esrbRating || "Not provided";
+        const esrbLabel = ESRB_RATING_LABELS[esrbRating] || ESRB_RATING_LABELS["Not provided"];
         const isFavorite = state.favorites.has(game.id);
         const titleId = `card-title-${game.id}-${rowId}`;
         const thumbImg = `<img 
@@ -1872,11 +1845,11 @@
                 <span>•</span>
                 <span>${game.genres.join(", ")}</span>
               </div>
-              <div class="platform-rating-row">
-                <div class="platform-pills" aria-label="Available platforms">
+              <div class="card-meta" aria-label="ESRB rating: ${escapeHtml(esrbRating)} — ${escapeHtml(esrbLabel)}">
+                ESRB: ${escapeHtml(esrbRating)} — ${escapeHtml(esrbLabel)}
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;" aria-label="Available platforms">
                 ${game.platforms.map(p => `<span class="platform-pill">${escapeHtml(p)}</span>`).join("")}
-                </div>
-                ${renderEsrbBadge(esrbRating, game.title)}
               </div>
 
               <ul class="features-list">
