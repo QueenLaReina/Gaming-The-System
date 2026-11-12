@@ -208,34 +208,6 @@
       }
     }
 
-    /* API Key manager sub-card */
-    .api-key-box {
-      background-color: rgba(15, 23, 42, 0.7);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 0.75rem 1rem;
-      margin-bottom: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .api-key-row {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .api-key-input {
-      flex: 1;
-      background-color: var(--bg-page);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-main);
-      padding: 0.45rem 0.75rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.8125rem;
-    }
-
     /* Dropzone area */
     .dropzone-box {
       border: 2px dashed var(--border-subtle);
@@ -591,6 +563,7 @@
     .search-wrapper {
       flex: 1;
       min-width: 280px;
+      position: relative;
     }
 
     .search-input {
@@ -606,26 +579,121 @@
       color: var(--text-subtle);
     }
 
+    .search-suggestions {
+      position: absolute;
+      top: calc(100% + 0.35rem);
+      right: 0;
+      left: 0;
+      z-index: 20;
+      max-height: 18rem;
+      overflow-y: auto;
+      padding: 0.25rem;
+      background-color: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+    }
+
+    .search-suggestions[hidden] {
+      display: none;
+    }
+
+    .search-suggestion {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.6rem 0.75rem;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-main);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .search-suggestion-type {
+      flex: 0 0 auto;
+      color: var(--text-subtle);
+      font-size: 0.8125rem;
+    }
+
+    .search-suggestion:hover,
+    .search-suggestion[aria-selected="true"] {
+      background-color: var(--bg-surface-elevated);
+    }
+
     .results-count {
       font-size: 0.9375rem;
       color: var(--text-muted);
       font-weight: 600;
     }
 
-    /* Cards Grid */
-    .game-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 1.5rem;
+    .browse-mode-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.9375rem;
+      font-weight: 600;
     }
 
-    @media (max-width: 640px) {
-      .game-grid {
-        grid-template-columns: 1fr;
-      }
+    .browse-mode-select {
+      background-color: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.65rem 2rem 0.65rem 0.75rem;
+      border-radius: var(--radius-md);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    /* Cards Grid */
+    .game-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .catalog-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    .catalog-row-heading {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      color: var(--text-main);
+    }
+
+    .catalog-row-count {
+      color: var(--text-subtle);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .catalog-row-games {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      padding: 0.25rem 0 0.75rem;
+      scroll-snap-type: x proximity;
+      scrollbar-color: var(--border-subtle) var(--bg-page);
+    }
+
+    .catalog-empty-row {
+      color: var(--text-muted);
+      font-size: 0.9375rem;
+      padding: 0.75rem 0;
     }
 
     .game-card {
+      flex: 0 0 min(360px, calc(100vw - 3rem));
       background-color: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
@@ -635,9 +703,29 @@
       justify-content: space-between;
       transition: border-color 0.15s ease;
       position: relative;
+      scroll-snap-align: start;
     }
     .game-card:hover {
       border-color: var(--primary);
+    }
+
+    .btn-favorite {
+      flex: 0 0 auto;
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      padding: 0.2rem 0.55rem;
+      font: inherit;
+      font-size: 1.125rem;
+      line-height: 1.2;
+      cursor: pointer;
+    }
+
+    .btn-favorite:hover,
+    .btn-favorite[aria-pressed="true"] {
+      border-color: var(--focus-ring);
+      color: var(--focus-ring);
     }
 
     .game-card.newly-added {
@@ -950,30 +1038,8 @@
       </div>
 
       <div class="vision-card" id="vision-panel" hidden>
-        <!-- Interactive Dropzone and API Key Controls -->
+        <!-- Interactive Dropzone -->
         <div>
-          <!-- API Key Box -->
-          <div class="api-key-box">
-            <label for="gemini-api-key" style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">
-              Gemini Vision API Key (Optional — built-in AI is used if left blank):
-            </label>
-            <div class="api-key-row">
-              <input 
-                type="password" 
-                id="gemini-api-key" 
-                class="api-key-input" 
-                placeholder="Leave blank to use the built-in AI, or enter your own Gemini key..."
-              >
-              <button type="button" class="btn-sample" id="btn-save-key">Save</button>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-subtle);">
-              <label style="cursor: pointer; display: flex; align-items: center; gap: 0.35rem;">
-                <input type="checkbox" id="remember-key-checkbox"> Remember Key
-              </label>
-              <span id="key-status-indicator">Mode: Built-in AI Vision</span>
-            </div>
-          </div>
-
           <!-- Dropzone -->
           <div 
             class="dropzone-box" 
@@ -1126,6 +1192,14 @@
         </button>
       </div>
       <div class="controls-bar">
+        <label class="browse-mode-control" for="browse-mode">
+          Browse by
+          <select class="browse-mode-select" id="browse-mode">
+            <option value="collections">Collections</option>
+            <option value="genres">Genres</option>
+            <option value="favorites">Favorites</option>
+          </select>
+        </label>
         <div class="search-wrapper">
           <input 
             type="search" 
@@ -1133,7 +1207,12 @@
             class="search-input" 
             placeholder="Search by title, genre, or platform (e.g. Celeste, PS5, Horror)..."
             aria-label="Search games"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="game-suggestions"
+            aria-expanded="false"
           >
+          <div class="search-suggestions" id="game-suggestions" role="listbox" aria-label="Game suggestions" hidden></div>
         </div>
         <div class="results-count" id="results-count" aria-live="polite">
           Showing 7 of 7 verified seed titles
@@ -1399,14 +1478,35 @@
     ];
 
     // Catalog State
+    const FAVORITES_STORAGE_KEY = "gamingHubFavoriteGames";
+    function loadFavoriteIds() {
+      try {
+        const savedIds = localStorage.getItem(FAVORITES_STORAGE_KEY);
+        if (!savedIds) return new Set();
+        const parsedIds = JSON.parse(savedIds);
+        if (!Array.isArray(parsedIds) || !parsedIds.every(id => typeof id === "string")) {
+          throw new Error("Saved favorites must be an array of game IDs.");
+        }
+        return new Set(parsedIds);
+      } catch (error) {
+        console.error("Could not load saved game favorites.", error);
+        return new Set();
+      }
+    }
+
     const state = {
       search: "",
-      activeFilters: new Set()
+      activeFilters: new Set(),
+      browseMode: "collections",
+      favorites: loadFavoriteIds()
     };
+    let activeGameSuggestion = -1;
 
     // DOM References
     const gameGrid = document.getElementById("game-grid");
     const searchInput = document.getElementById("search-input");
+    const gameSuggestions = document.getElementById("game-suggestions");
+    const browseModeSelect = document.getElementById("browse-mode");
     const filterForm = document.getElementById("filter-form");
     const btnResetFilters = document.getElementById("btn-reset-filters");
     const resultsCount = document.getElementById("results-count");
@@ -1437,41 +1537,9 @@
     const btnSampleZelda = document.getElementById("btn-sample-zelda");
     const btnSampleSpiderman = document.getElementById("btn-sample-spiderman");
     const btnSampleStarfield = document.getElementById("btn-sample-starfield");
-    const geminiApiKeyInput = document.getElementById("gemini-api-key");
-    const btnSaveKey = document.getElementById("btn-save-key");
-    const rememberKeyCheckbox = document.getElementById("remember-key-checkbox");
-    const keyStatusIndicator = document.getElementById("key-status-indicator");
-
     let currentAnalyzedGame = null;
     let storedBase64Image = null;
     let storedMimeType = null;
-
-    // Initialize API Key from storage if present
-    const savedKey = localStorage.getItem("gemini_hub_api_key");
-    if (savedKey) {
-      geminiApiKeyInput.value = savedKey;
-      rememberKeyCheckbox.checked = true;
-      keyStatusIndicator.textContent = "Mode: Custom Gemini Vision API Key Active";
-      keyStatusIndicator.style.color = "#38bdf8";
-    }
-
-    btnSaveKey.addEventListener("click", () => {
-      const val = geminiApiKeyInput.value.trim();
-      if (rememberKeyCheckbox.checked) {
-        localStorage.setItem("gemini_hub_api_key", val);
-      } else {
-        localStorage.removeItem("gemini_hub_api_key");
-      }
-      if (val) {
-        keyStatusIndicator.textContent = "Mode: Custom Gemini Vision API Key Active";
-        keyStatusIndicator.style.color = "#38bdf8";
-        showToast("Gemini API key saved for live multimodal inference.");
-      } else {
-        keyStatusIndicator.textContent = "Mode: Built-in AI Vision";
-        keyStatusIndicator.style.color = "var(--text-subtle)";
-        showToast("Using the built-in AI vision service.");
-      }
-    });
 
     // Helper: Escape HTML
     function escapeHtml(str) {
@@ -1484,9 +1552,69 @@
         .replace(/'/g, "&#039;");
     }
 
+    function updateGameSuggestions() {
+      const query = searchInput.value.trim().toLocaleLowerCase();
+      const suggestions = query
+        ? [
+            { type: "Game", values: GAMES_DATA.map(game => game.title) },
+            { type: "Genre", values: GAMES_DATA.flatMap(game => game.genres) },
+            { type: "Platform", values: GAMES_DATA.flatMap(game => game.platforms) }
+          ].flatMap(({ type, values }) =>
+            [...new Set(values.filter(Boolean))]
+              .filter(value => value.toLocaleLowerCase().includes(query))
+              .sort((a, b) => a.localeCompare(b))
+              .slice(0, 4)
+              .map(value => ({ type, value }))
+          )
+        : [];
+
+      gameSuggestions.replaceChildren(...suggestions.map((suggestion, index) => {
+        const option = document.createElement("div");
+        option.className = "search-suggestion";
+        option.id = `game-suggestion-${index}`;
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", String(index === activeGameSuggestion));
+        option.dataset.value = suggestion.value;
+        const value = document.createElement("span");
+        value.textContent = suggestion.value;
+        const type = document.createElement("span");
+        type.className = "search-suggestion-type";
+        type.textContent = suggestion.type;
+        option.append(value, type);
+        return option;
+      }));
+      gameSuggestions.hidden = suggestions.length === 0;
+      searchInput.setAttribute("aria-expanded", String(suggestions.length > 0));
+      if (activeGameSuggestion >= 0 && activeGameSuggestion < suggestions.length) {
+        searchInput.setAttribute("aria-activedescendant", `game-suggestion-${activeGameSuggestion}`);
+      } else {
+        searchInput.removeAttribute("aria-activedescendant");
+        activeGameSuggestion = -1;
+      }
+    }
+
+    function selectGameSuggestion(title) {
+      searchInput.value = title;
+      state.search = title;
+      activeGameSuggestion = -1;
+      gameSuggestions.hidden = true;
+      searchInput.setAttribute("aria-expanded", "false");
+      searchInput.removeAttribute("aria-activedescendant");
+      renderCatalog();
+      searchInput.focus();
+    }
+
+    function closeGameSuggestions() {
+      activeGameSuggestion = -1;
+      gameSuggestions.hidden = true;
+      searchInput.setAttribute("aria-expanded", "false");
+      searchInput.removeAttribute("aria-activedescendant");
+    }
+
     // Render Catalog
     function renderCatalog() {
       const filtered = GAMES_DATA.filter(game => {
+        if (state.browseMode === "favorites" && !state.favorites.has(game.id)) return false;
         const q = state.search.toLowerCase();
         const matchesSearch = !q || 
           game.title.toLowerCase().includes(q) ||
@@ -1500,7 +1628,7 @@
         return true;
       });
 
-      resultsCount.textContent = `Showing ${filtered.length} of ${GAMES_DATA.length} verified seed titles`;
+      resultsCount.textContent = `${filtered.length} matching ${filtered.length === 1 ? "game" : "games"}`;
       const filterCountBadge = document.getElementById("active-filter-count");
       if (filterCountBadge) {
         const n = state.activeFilters.size;
@@ -1509,20 +1637,25 @@
       }
 
       if (filtered.length === 0) {
+        const emptyMessage = state.browseMode === "favorites"
+          ? "No favorite games match your search and motor filters. Star a game in another browse view to add it here."
+          : "Try unchecking some motor criteria or clearing your search term.";
         gameGrid.innerHTML = `
-          <div style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-subtle);">
+          <div style="padding: 3rem 1rem; text-align: center; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-subtle);">
             <p style="font-size: 1.125rem; font-weight: 700; color: var(--text-main);">No matching games found.</p>
-            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-top: 0.5rem;">Try unchecking some motor criteria or clearing your search term.</p>
+            <p style="color: var(--text-muted); font-size: 0.9375rem; margin-top: 0.5rem;">${emptyMessage}</p>
           </div>
         `;
         return;
       }
 
-      gameGrid.innerHTML = filtered.map(game => {
+      function renderGameCard(game, rowId) {
         const thumbUrl = `https://img.youtube.com/vi/${game.media.trailerId}/hqdefault.jpg`;
         const newlyAddedClass = game.isNewlyAdded ? " newly-added" : "";
         const hasDetails = !game.isNewlyAdded && window.GAME_DETAILS && window.GAME_DETAILS[game.id];
         const detailsUrl = `game.html?id=${encodeURIComponent(game.id)}`;
+        const isFavorite = state.favorites.has(game.id);
+        const titleId = `card-title-${game.id}-${rowId}`;
         const thumbImg = `<img 
                 src="${thumbUrl}" 
                 alt="${escapeHtml(game.title)} gameplay preview" 
@@ -1532,11 +1665,16 @@
               >`;
 
         return `
-          <article class="game-card${newlyAddedClass}" aria-labelledby="card-title-${game.id}">
+          <article class="game-card${newlyAddedClass}" aria-labelledby="${escapeHtml(titleId)}">
             <div>
-              <div class="card-title" id="card-title-${game.id}">
+              <div class="card-title" id="${escapeHtml(titleId)}" data-game-card-title="${escapeHtml(game.id)}">
                 <span>${escapeHtml(game.title)}</span>
-                ${game.isNewlyAdded ? `<span class="sprint-badge" style="background:#7e22ce;font-size:0.7rem;">AI Verified</span>` : ''}
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  ${game.isNewlyAdded ? `<span class="sprint-badge" style="background:#7e22ce;font-size:0.7rem;">AI Verified</span>` : ''}
+                  <button type="button" class="btn-favorite" data-favorite-id="${escapeHtml(game.id)}" aria-label="${isFavorite ? "Remove" : "Add"} ${escapeHtml(game.title)} ${isFavorite ? "from" : "to"} favorites" aria-pressed="${isFavorite}">
+                    <span aria-hidden="true">${isFavorite ? "★" : "☆"}</span>
+                  </button>
+                </div>
               </div>
               <div class="card-meta">
                 <span>${game.releaseYear}</span>
@@ -1585,7 +1723,71 @@
             </div>
           </article>
         `;
-      }).join("");
+      }
+
+      function renderCatalogRow(id, title, games, emptyMessage = "") {
+        return `
+          <section class="catalog-row" aria-labelledby="${id}-heading">
+            <h2 class="catalog-row-heading" id="${id}-heading">
+              ${escapeHtml(title)} <span class="catalog-row-count">(${games.length})</span>
+            </h2>
+            ${games.length
+              ? `<div class="catalog-row-games">${games.map(game => renderGameCard(game, id)).join("")}</div>`
+              : `<p class="catalog-empty-row">${escapeHtml(emptyMessage)}</p>`}
+          </section>
+        `;
+      }
+
+      const byTitle = (a, b) => a.title.localeCompare(b.title);
+      const newestFirst = (a, b) => b.releaseYear - a.releaseYear || byTitle(a, b);
+
+      if (state.browseMode === "genres") {
+        const gamesByGenre = new Map();
+        filtered.forEach(game => {
+          game.genres.forEach(genre => {
+            if (!gamesByGenre.has(genre)) gamesByGenre.set(genre, []);
+            gamesByGenre.get(genre).push(game);
+          });
+        });
+        gameGrid.innerHTML = [...gamesByGenre.entries()]
+          .sort(([genreA], [genreB]) => genreA.localeCompare(genreB))
+          .map(([genre, games], index) =>
+            renderCatalogRow(`genre-${index}`, genre, games.sort(newestFirst))
+          )
+          .join("");
+      } else if (state.browseMode === "favorites") {
+        gameGrid.innerHTML = renderCatalogRow("favorites-only", "Favorites", [...filtered].sort(byTitle));
+      } else {
+        const currentYear = new Date().getFullYear();
+        const newReleases = filtered
+          .filter(game => game.releaseYear >= currentYear - 2)
+          .sort(newestFirst);
+        const recentlyAdded = filtered
+          .filter(game => game.isNewlyAdded)
+          .sort(newestFirst);
+        const classics = filtered
+          .filter(game => game.releaseYear <= currentYear - 8)
+          .sort((a, b) => a.releaseYear - b.releaseYear || byTitle(a, b));
+        const favorites = filtered
+          .filter(game => state.favorites.has(game.id))
+          .sort(byTitle);
+        const allGames = [...filtered].sort(newestFirst);
+        const rows = [
+          newReleases.length && renderCatalogRow("new-releases", "New Releases", newReleases),
+          recentlyAdded.length && renderCatalogRow("recently-added", "Recently Added", recentlyAdded),
+          renderCatalogRow(
+            "favorites",
+            "Favorites",
+            favorites,
+            state.favorites.size
+              ? "No favorite games match your current search and filters."
+              : "Choose the star on any game to build your favorites row."
+          ),
+          classics.length && renderCatalogRow("classics", "Classics", classics),
+          renderCatalogRow("all-games", "All Games", allGames)
+        ].filter(Boolean);
+        gameGrid.innerHTML = rows.join("");
+      }
 
       document.querySelectorAll(".btn-flag").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -1893,72 +2095,21 @@ Output MUST strictly conform to JSON format:
       }
     };
 
-    // Live Gemini Vision API Call with exponential backoff
-    async function callGeminiVision(base64Data, mimeType, userKey = "") {
-      // No personal key: use the app's built-in AI service (server-side)
-      if (!userKey) {
-        const res = await fetch("/api/vision", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            systemInstruction: SYSTEM_INSTRUCTION_3_LAYER,
-            prompt: PROMPT_USER_QUERY,
-            base64Data,
-            mimeType
-          })
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || `Vision audit failed (status ${res.status})`);
-        return data.result;
-      }
-      const apiKey = userKey;
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-      const payload = {
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { text: PROMPT_USER_QUERY },
-              {
-                inlineData: {
-                  mimeType: mimeType || "image/jpeg",
-                  data: base64Data
-                }
-              }
-            ]
-          }
-        ],
-        systemInstruction: {
-          parts: [{ text: SYSTEM_INSTRUCTION_3_LAYER }]
-        },
-        generationConfig: {
-          responseMimeType: "application/json"
-        }
-      };
-
-      const delays = [1000, 2000, 4000];
-      for (let attempt = 0; attempt <= delays.length; attempt++) {
-        try {
-          const res = await fetch(apiUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          const data = await res.json();
-          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            return JSON.parse(text);
-          }
-          throw new Error("No text response from model");
-        } catch (err) {
-          if (attempt === delays.length) throw err;
-          await new Promise(r => setTimeout(r, delays[attempt]));
-        }
-      }
+    // Send vision requests through the app's built-in AI service.
+    async function callGeminiVision(base64Data, mimeType) {
+      const res = await fetch("/api/vision", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: SYSTEM_INSTRUCTION_3_LAYER,
+          prompt: PROMPT_USER_QUERY,
+          base64Data,
+          mimeType
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Vision audit failed (status ${res.status})`);
+      return data.result;
     }
 
     // Process & Render Vision Output
@@ -2083,12 +2234,9 @@ Output MUST strictly conform to JSON format:
         </div>
       `;
 
-      const userKey = geminiApiKeyInput.value.trim();
-
-      // If user provided a custom key or we have an inline base64 image, attempt Live Gemini call
       if (storedBase64Image) {
         try {
-          const liveResult = await callGeminiVision(storedBase64Image, storedMimeType, userKey);
+          const liveResult = await callGeminiVision(storedBase64Image, storedMimeType);
           if (liveResult && liveResult.vision_analysis) {
             displayVisionResult(liveResult);
             return;
@@ -2223,11 +2371,13 @@ Output MUST strictly conform to JSON format:
       }
 
       GAMES_DATA.unshift(currentAnalyzedGame);
+      updateGameSuggestions();
       renderCatalog();
       showToast(`Added ${currentAnalyzedGame.title} to live catalog!`);
       
       // Smooth scroll to newly added card
-      const targetCard = document.getElementById(`card-title-${currentAnalyzedGame.id}`);
+      const targetCard = Array.from(gameGrid.querySelectorAll("[data-game-card-title]"))
+        .find(title => title.getAttribute("data-game-card-title") === currentAnalyzedGame.id);
       if (targetCard) {
         targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
       }
@@ -2246,9 +2396,80 @@ Output MUST strictly conform to JSON format:
       renderCatalog();
     });
 
+    browseModeSelect.addEventListener("change", (e) => {
+      state.browseMode = e.target.value;
+      renderCatalog();
+    });
+
+    gameGrid.addEventListener("click", (e) => {
+      const button = e.target.closest(".btn-favorite");
+      if (!button) return;
+
+      const gameId = button.getAttribute("data-favorite-id");
+      if (state.favorites.has(gameId)) {
+        state.favorites.delete(gameId);
+      } else {
+        state.favorites.add(gameId);
+      }
+
+      try {
+        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...state.favorites]));
+      } catch (error) {
+        console.error("Could not save game favorites.", error);
+        showToast("Favorite updated for this session, but could not be saved in this browser.");
+      }
+
+      renderCatalog();
+      const replacementButton = Array.from(gameGrid.querySelectorAll(".btn-favorite"))
+        .find(favoriteButton => favoriteButton.getAttribute("data-favorite-id") === gameId);
+      if (replacementButton) {
+        replacementButton.focus();
+      } else if (state.browseMode === "favorites") {
+        browseModeSelect.focus();
+      }
+    });
+
     searchInput.addEventListener("input", (e) => {
       state.search = e.target.value.trim();
+      activeGameSuggestion = -1;
+      updateGameSuggestions();
       renderCatalog();
+    });
+
+    searchInput.addEventListener("focus", updateGameSuggestions);
+
+    searchInput.addEventListener("keydown", (e) => {
+      const options = gameSuggestions.querySelectorAll('[role="option"]');
+      if (e.key === "Escape") {
+        closeGameSuggestions();
+        return;
+      }
+      if (options.length === 0) return;
+
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const direction = e.key === "ArrowDown" ? 1 : -1;
+        activeGameSuggestion = activeGameSuggestion < 0
+          ? (direction === 1 ? 0 : options.length - 1)
+          : (activeGameSuggestion + direction + options.length) % options.length;
+        updateGameSuggestions();
+      } else if (e.key === "Enter" && activeGameSuggestion >= 0) {
+        e.preventDefault();
+        selectGameSuggestion(options[activeGameSuggestion].dataset.value);
+      }
+    });
+
+    gameSuggestions.addEventListener("mousedown", (e) => {
+      if (e.target.closest('[role="option"]')) e.preventDefault();
+    });
+
+    gameSuggestions.addEventListener("click", (e) => {
+      const option = e.target.closest('[role="option"]');
+      if (option) selectGameSuggestion(option.dataset.value);
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!gameSuggestions.parentElement.contains(e.target)) closeGameSuggestions();
     });
 
     btnResetFilters.addEventListener("click", () => {
@@ -2256,6 +2477,7 @@ Output MUST strictly conform to JSON format:
       searchInput.value = "";
       state.search = "";
       state.activeFilters.clear();
+      closeGameSuggestions();
       renderCatalog();
       searchInput.focus();
     });
@@ -2338,6 +2560,7 @@ Output MUST strictly conform to JSON format:
     }
 
     // Initial Catalog Rendering
+    updateGameSuggestions();
     renderCatalog();
   </script>
 </body>
