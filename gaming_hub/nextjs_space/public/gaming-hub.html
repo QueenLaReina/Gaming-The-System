@@ -381,6 +381,23 @@
       padding-top: 0.75rem;
       border-top: 1px solid var(--border-subtle);
     }
+    .catalog-metadata-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+    }
+    .catalog-release-date {
+      background: var(--bg-page);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font: inherit;
+      padding: 0.35rem 0.5rem;
+    }
+    .catalog-popular-label { display: inline-flex; align-items: center; gap: 0.4rem; }
 
     .btn-add-catalog {
       background-color: var(--primary);
@@ -747,6 +764,15 @@
       align-items: center;
       justify-content: space-between;
     }
+    .card-title-link {
+      color: inherit;
+      text-decoration: none;
+    }
+    .card-title-link:hover {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
 
     .card-meta {
       font-size: 0.875rem;
@@ -765,6 +791,33 @@
       border-radius: var(--radius-sm);
       font-size: 0.75rem;
       font-weight: 600;
+    }
+    .platform-rating-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .platform-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .esrb-rating-badge {
+      display: block;
+      width: 40px;
+      height: 60px;
+      flex: 0 0 auto;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 2px;
+    }
+    .esrb-rating-missing {
+      align-self: flex-start;
+      color: var(--text-subtle);
+      font-size: 0.7rem;
+      line-height: 1.25;
+      max-width: 5.5rem;
     }
 
     .features-list {
@@ -802,6 +855,22 @@
       font-weight: 600;
       padding: 0.2rem 0.5rem;
       border-radius: var(--radius-sm);
+    }
+
+    a.hardware-tag {
+      color: #ccfbf1;
+      text-decoration: none;
+    }
+
+    a.hardware-tag:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .hardware-profile-link {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     /* Trailer Actions (Direct Bounded Launch) */
@@ -1103,6 +1172,15 @@
 
           <!-- Actions / Schema Controls -->
           <div class="vision-actions-bar" id="vision-actions" style="display: none;">
+            <div class="catalog-metadata-controls">
+              <label for="catalog-release-date">Verified release date
+                <input class="catalog-release-date" id="catalog-release-date" type="date">
+              </label>
+              <label class="catalog-popular-label">
+                <input id="catalog-mark-popular" type="checkbox">
+                Include in Popular Games
+              </label>
+            </div>
             <button type="button" class="btn-add-catalog" id="btn-add-to-catalog">
               <span>+</span> Add Verified Game to Catalog
             </button>
@@ -1173,11 +1251,11 @@
           <span class="filter-group-legend">Hardware Compatibility</span>
           <label class="checkbox-label">
             <input type="checkbox" name="filter" value="psAccess">
-            PlayStation Access Profiled
+            PlayStation Access Controller Supported
           </label>
           <label class="checkbox-label">
             <input type="checkbox" name="filter" value="xac">
-            Xbox Adaptive / Copilot Validated
+            Xbox Adaptive Controller (XAC) / Copilot Validated
           </label>
         </div>
       </form>
@@ -1197,6 +1275,7 @@
           <select class="browse-mode-select" id="browse-mode">
             <option value="collections">Collections</option>
             <option value="genres">Genres</option>
+            <option value="ratings">ESRB Ratings</option>
             <option value="favorites">Favorites</option>
           </select>
         </label>
@@ -1275,9 +1354,12 @@
       {
         id: "tlou1",
         title: "The Last of Us Part I",
+        esrbRating: "M",
+        releaseDate: "2022-09-02",
+        isPopular: true,
         releaseYear: 2022,
-        platforms: ["PS5", "PC"],
-        genres: ["Action-Adventure", "Survival Horror"],
+        platforms: ["PlayStation 5", "Microsoft Windows"],
+        genres: ["Action-Adventure", "Survival Horror", "Shooter", "Adventure"],
         features: {
           fullRemap: true,
           holdToToggle: true,
@@ -1304,9 +1386,12 @@
       {
         id: "gowr",
         title: "God of War Ragnarök",
+        esrbRating: "M",
+        releaseDate: "2022-11-09",
+        isPopular: true,
         releaseYear: 2022,
-        platforms: ["PS5", "PS4"],
-        genres: ["Action-Adventure", "Hack and Slash"],
+        platforms: ["PlayStation 4", "PlayStation 5", "Microsoft Windows"],
+        genres: ["Action-Adventure", "Hack and Slash", "Adventure"],
         features: {
           fullRemap: true,
           holdToToggle: true,
@@ -1333,9 +1418,12 @@
       {
         id: "fh5",
         title: "Forza Horizon 5",
+        esrbRating: "E",
+        releaseDate: "2021-11-09",
+        isPopular: true,
         releaseYear: 2021,
-        platforms: ["Xbox Series X/S", "Xbox One", "PC"],
-        genres: ["Racing", "Open World"],
+        platforms: ["PlayStation 5", "Xbox Series X|S", "Xbox One", "Microsoft Windows"],
+        genres: ["Racing", "Simulation", "Open World"],
         features: {
           fullRemap: true,
           holdToToggle: true,
@@ -1362,9 +1450,12 @@
       {
         id: "celeste",
         title: "Celeste",
+        esrbRating: "E10+",
+        releaseDate: "2018-01-25",
+        isPopular: true,
         releaseYear: 2018,
-        platforms: ["Nintendo Switch", "PC", "Xbox", "PS4"],
-        genres: ["Platformer", "Indie"],
+        platforms: ["Nintendo Switch", "PlayStation 4", "Xbox One", "Microsoft Windows", "macOS", "Linux"],
+        genres: ["Platformer", "Action", "Indie"],
         features: {
           fullRemap: true,
           holdToToggle: true,
@@ -1390,10 +1481,13 @@
       },
       {
         id: "re9",
-        title: "Resident Evil 9 / Modern Benchmark",
+        title: "Resident Evil Requiem",
+        esrbRating: "M",
+        releaseDate: "2026-02-26",
+        isPopular: true,
         releaseYear: 2026,
-        platforms: ["PS5", "PC", "Xbox Series X/S"],
-        genres: ["Survival Horror", "Action"],
+        platforms: ["PlayStation 5", "Nintendo Switch 2", "Xbox Series X and Series S", "GeForce NOW", "Microsoft Windows"],
+        genres: ["Survival Horror", "Puzzle", "Shooter", "Action-Adventure", "Adventure"],
         features: {
           fullRemap: true,
           holdToToggle: true,
@@ -1420,9 +1514,12 @@
       {
         id: "sf6",
         title: "Street Fighter 6",
+        esrbRating: "T",
+        releaseDate: "2023-06-02",
+        isPopular: true,
         releaseYear: 2023,
-        platforms: ["PS5", "Xbox Series X/S", "PC"],
-        genres: ["Fighting", "Competitive"],
+        platforms: ["PlayStation 4", "PlayStation 5", "Xbox Series X|S", "Nintendo Switch 2", "Microsoft Windows"],
+        genres: ["Fighting", "Action", "Competitive"],
         features: {
           fullRemap: true,
           holdToToggle: false,
@@ -1449,9 +1546,12 @@
       {
         id: "acnh",
         title: "Animal Crossing: New Horizons",
+        esrbRating: "E",
+        releaseDate: "2020-03-20",
+        isPopular: true,
         releaseYear: 2020,
-        platforms: ["Nintendo Switch"],
-        genres: ["Simulation", "Cozy"],
+        platforms: ["Nintendo Switch", "Nintendo Switch 2"],
+        genres: ["Simulation", "Life Simulation", "Social Simulation"],
         features: {
           fullRemap: false,
           holdToToggle: false,
@@ -1468,7 +1568,7 @@
           "Relies on Nintendo Switch OS-level remapping for physical controllers.",
           "Slow pacing eliminates fine dexterity strain."
         ],
-        hardwareCompatibility: ["XAC via Mayflash/Switch Adapter", "Hori Flex Controller"],
+        hardwareCompatibility: ["XAC via Mayflash/Switch Adapter", "HORI Flex Controller for Nintendo Switch"],
         media: {
           trailerId: "_3YNL0OWio0",
           watchUrl: "https://www.youtube.com/watch?v=_3YNL0OWio0"
@@ -1532,6 +1632,8 @@
     const visionContent = document.getElementById("vision-content");
     const visionActions = document.getElementById("vision-actions");
     const btnAddToCatalog = document.getElementById("btn-add-to-catalog");
+    const catalogReleaseDate = document.getElementById("catalog-release-date");
+    const catalogMarkPopular = document.getElementById("catalog-mark-popular");
     const btnToggleSchema = document.getElementById("btn-toggle-schema");
     const rawSchema = document.getElementById("raw-schema");
     const btnSampleZelda = document.getElementById("btn-sample-zelda");
@@ -1552,8 +1654,90 @@
         .replace(/'/g, "&#039;");
     }
 
+    function normalizeSearchText(value) {
+      return String(value)
+        .toLocaleLowerCase()
+        .replace(/\bplay\s*station\b/g, "ps")
+        .replace(/\bps\s+(?=\d)/g, "ps");
+    }
+
+    function matchesSearchSuggestion(value, query) {
+      const normalizedValue = normalizeSearchText(value);
+      const queryWords = query.split(/\s+/).filter(Boolean);
+      return normalizedValue.includes(query) ||
+        queryWords.some(word => normalizedValue.split(/\s+/).some(valueWord => valueWord.startsWith(word)));
+    }
+
+    const PLAYSTATION_ACCESS_URL = "https://www.playstation.com/en-us/accessories/access-controller/?srsltid=AYCX9vK6Hbas-rCY7VlserzBK1o5EhrDkMwC0ndKuThbEflOzMrtyCaG";
+    const XBOX_ADAPTIVE_CONTROLLER_URL = "https://www.microsoft.com/en-us/d/xbox-adaptive-controller/8nsdbhz1n3d8";
+    const HORI_FLEX_CONTROLLER_URL = "https://stores.horiusa.com/flex-controller-for-nintendo-switch/";
+    const ESRB_RATING_LABELS = {
+      "E": "Everyone",
+      "E10+": "Everyone 10+",
+      "T": "Teen",
+      "M": "Mature 17+",
+      "AO": "Adults Only 18+",
+      "RP": "Rating Pending",
+      "Not provided": "Rating not provided"
+    };
+    const ESRB_RATING_ICONS = {
+      "E": "https://www.esrb.org/wp-content/themes/esrb/assets/images/E.svg",
+      "E10+": "https://www.esrb.org/wp-content/themes/esrb/assets/images/E10plus.svg",
+      "T": "https://www.esrb.org/wp-content/themes/esrb/assets/images/T.svg",
+      "M": "https://www.esrb.org/wp-content/themes/esrb/assets/images/M.svg",
+      "AO": "https://www.esrb.org/wp-content/themes/esrb/assets/images/AO.svg",
+      "RP": "https://www.esrb.org/wp-content/themes/esrb/assets/images/RP.svg"
+    };
+
+    function renderEsrbBadge(rating, gameTitle) {
+      const iconUrl = ESRB_RATING_ICONS[rating];
+      if (!iconUrl) {
+        return `<span class="esrb-rating-missing" aria-label="ESRB rating not provided for ${escapeHtml(gameTitle)}">ESRB rating not provided</span>`;
+      }
+      const label = ESRB_RATING_LABELS[rating];
+      return `<img class="esrb-rating-badge" src="${iconUrl}" alt="ESRB ${label} rating for ${escapeHtml(gameTitle)}" title="ESRB ${label}">`;
+    }
+
+    function renderHardwareTag(hardware) {
+      const label = hardware
+        .replace(/\b(?:PS|PlayStation) Access\b(?!\s+Controller)/gi, "PlayStation Access Controller")
+        .replace(/\bXAC\b/gi, "Xbox Adaptive Controller (XAC)")
+        .replace(/\bXbox Adaptive Controller\b(?!\s*\(XAC\))/gi, "Xbox Adaptive Controller (XAC)");
+      const escapedLabel = escapeHtml(label);
+      if (/HORI Flex Controller/i.test(hardware)) {
+        return `<a class="hardware-tag" href="${HORI_FLEX_CONTROLLER_URL}" target="_blank" rel="noopener noreferrer" aria-label="Learn about the HORI Flex Controller for Nintendo Switch: ${escapedLabel}">⚡ ${escapedLabel}</a>`;
+      }
+      if (/\b(?:PS|PlayStation) Access\b/i.test(hardware)) {
+        return `<a class="hardware-tag" href="${PLAYSTATION_ACCESS_URL}" target="_blank" rel="noopener noreferrer" aria-label="Learn about the PlayStation Access Controller: ${escapedLabel}">⚡ ${escapedLabel}</a>`;
+      }
+      if (/\bXAC\b|Xbox Adaptive Controller/i.test(hardware)) {
+        return `<a class="hardware-tag" href="${XBOX_ADAPTIVE_CONTROLLER_URL}" target="_blank" rel="noopener noreferrer" aria-label="Learn about the Xbox Adaptive Controller: ${escapedLabel}">⚡ ${escapedLabel}</a>`;
+      }
+      return `<span class="hardware-tag">⚡ ${escapedLabel}</span>`;
+    }
+
+    function renderHardwareReferences(text) {
+      const hardwarePattern = /\b(?:PlayStation Access Controller|PlayStation Access|PS Access|Xbox Adaptive Controller|XAC)\b/gi;
+      const value = String(text);
+      let html = "";
+      let previousIndex = 0;
+      for (const match of value.matchAll(hardwarePattern)) {
+        html += escapeHtml(value.slice(previousIndex, match.index));
+        const label = match[0]
+          .replace(/\b(?:PS|PlayStation) Access\b(?!\s+Controller)/i, "PlayStation Access Controller")
+          .replace(/\bXAC\b/i, "Xbox Adaptive Controller (XAC)")
+          .replace(/\bXbox Adaptive Controller\b(?!\s*\(XAC\))/i, "Xbox Adaptive Controller (XAC)");
+        const url = /\b(?:PS|PlayStation) Access\b/i.test(match[0])
+          ? PLAYSTATION_ACCESS_URL
+          : XBOX_ADAPTIVE_CONTROLLER_URL;
+        html += `<a class="hardware-profile-link" href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`;
+        previousIndex = match.index + match[0].length;
+      }
+      return html + escapeHtml(value.slice(previousIndex));
+    }
+
     function updateGameSuggestions() {
-      const query = searchInput.value.trim().toLocaleLowerCase();
+      const query = normalizeSearchText(searchInput.value.trim());
       const suggestions = query
         ? [
             { type: "Game", values: GAMES_DATA.map(game => game.title) },
@@ -1561,9 +1745,13 @@
             { type: "Platform", values: GAMES_DATA.flatMap(game => game.platforms) }
           ].flatMap(({ type, values }) =>
             [...new Set(values.filter(Boolean))]
-              .filter(value => value.toLocaleLowerCase().includes(query))
-              .sort((a, b) => a.localeCompare(b))
-              .slice(0, 4)
+              .filter(value => matchesSearchSuggestion(value, query))
+              .sort((a, b) => {
+                const aStartsWithQuery = normalizeSearchText(a).startsWith(query);
+                const bStartsWithQuery = normalizeSearchText(b).startsWith(query);
+                return Number(bStartsWithQuery) - Number(aStartsWithQuery) || a.localeCompare(b);
+              })
+              .slice(0, 8)
               .map(value => ({ type, value }))
           )
         : [];
@@ -1615,11 +1803,11 @@
     function renderCatalog() {
       const filtered = GAMES_DATA.filter(game => {
         if (state.browseMode === "favorites" && !state.favorites.has(game.id)) return false;
-        const q = state.search.toLowerCase();
+        const q = normalizeSearchText(state.search);
         const matchesSearch = !q || 
-          game.title.toLowerCase().includes(q) ||
-          game.genres.some(g => g.toLowerCase().includes(q)) ||
-          game.platforms.some(p => p.toLowerCase().includes(q));
+          normalizeSearchText(game.title).includes(q) ||
+          game.genres.some(g => normalizeSearchText(g).includes(q)) ||
+          game.platforms.some(p => normalizeSearchText(p).includes(q));
 
         if (!matchesSearch) return false;
         for (const filterKey of state.activeFilters) {
@@ -1654,6 +1842,7 @@
         const newlyAddedClass = game.isNewlyAdded ? " newly-added" : "";
         const hasDetails = !game.isNewlyAdded && window.GAME_DETAILS && window.GAME_DETAILS[game.id];
         const detailsUrl = `game.html?id=${encodeURIComponent(game.id)}`;
+        const esrbRating = ESRB_RATING_ICONS[game.esrbRating] ? game.esrbRating : "Not provided";
         const isFavorite = state.favorites.has(game.id);
         const titleId = `card-title-${game.id}-${rowId}`;
         const thumbImg = `<img 
@@ -1668,7 +1857,9 @@
           <article class="game-card${newlyAddedClass}" aria-labelledby="${escapeHtml(titleId)}">
             <div>
               <div class="card-title" id="${escapeHtml(titleId)}" data-game-card-title="${escapeHtml(game.id)}">
-                <span>${escapeHtml(game.title)}</span>
+                ${hasDetails
+                  ? `<a class="card-title-link" href="${detailsUrl}">${escapeHtml(game.title)}</a>`
+                  : `<span>${escapeHtml(game.title)}</span>`}
                 <div style="display:flex; align-items:center; gap:0.5rem;">
                   ${game.isNewlyAdded ? `<span class="sprint-badge" style="background:#7e22ce;font-size:0.7rem;">AI Verified</span>` : ''}
                   <button type="button" class="btn-favorite" data-favorite-id="${escapeHtml(game.id)}" aria-label="${isFavorite ? "Remove" : "Add"} ${escapeHtml(game.title)} ${isFavorite ? "from" : "to"} favorites" aria-pressed="${isFavorite}">
@@ -1681,23 +1872,24 @@
                 <span>•</span>
                 <span>${game.genres.join(", ")}</span>
               </div>
-              <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+              <div class="platform-rating-row">
+                <div class="platform-pills" aria-label="Available platforms">
                 ${game.platforms.map(p => `<span class="platform-pill">${escapeHtml(p)}</span>`).join("")}
+                </div>
+                ${renderEsrbBadge(esrbRating, game.title)}
               </div>
 
               <ul class="features-list">
                 ${game.highlights.map(hl => `
                   <li class="feature-item">
                     <span class="feature-icon" aria-hidden="true">✓</span>
-                    <span>${escapeHtml(hl)}</span>
+                    <span>${renderHardwareReferences(hl)}</span>
                   </li>
                 `).join("")}
               </ul>
 
               <div class="hardware-tags" aria-label="Adaptive Hardware Validations">
-                ${game.hardwareCompatibility.map(hw => `
-                  <span class="hardware-tag">⚡ ${escapeHtml(hw)}</span>
-                `).join("")}
+                ${game.hardwareCompatibility.map(renderHardwareTag).join("")}
               </div>
             </div>
 
@@ -1740,6 +1932,14 @@
 
       const byTitle = (a, b) => a.title.localeCompare(b.title);
       const newestFirst = (a, b) => b.releaseYear - a.releaseYear || byTitle(a, b);
+      function isNewRelease(game, today = new Date()) {
+        if (typeof game.releaseDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(game.releaseDate)) return false;
+        const releaseTime = Date.parse(`${game.releaseDate}T00:00:00Z`);
+        if (!Number.isFinite(releaseTime) || new Date(releaseTime).toISOString().slice(0, 10) !== game.releaseDate) return false;
+        const todayTime = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+        const ageInDays = Math.floor((todayTime - releaseTime) / 86400000);
+        return ageInDays >= 0 && ageInDays <= 28;
+      }
 
       if (state.browseMode === "genres") {
         const gamesByGenre = new Map();
@@ -1755,16 +1955,37 @@
             renderCatalogRow(`genre-${index}`, genre, games.sort(newestFirst))
           )
           .join("");
+      } else if (state.browseMode === "ratings") {
+        const gamesByRating = new Map();
+        filtered.forEach(game => {
+          const rating = ESRB_RATING_ICONS[game.esrbRating] ? game.esrbRating : "Not provided";
+          if (!gamesByRating.has(rating)) gamesByRating.set(rating, []);
+          gamesByRating.get(rating).push(game);
+        });
+        const ratingOrder = ["E", "E10+", "T", "M", "AO", "RP", "Not provided"];
+        gameGrid.innerHTML = [...gamesByRating.entries()]
+          .sort(([ratingA], [ratingB]) => ratingOrder.indexOf(ratingA) - ratingOrder.indexOf(ratingB))
+          .map(([rating, games], index) =>
+            renderCatalogRow(
+              `esrb-${index}`,
+              `${rating} — ${ESRB_RATING_LABELS[rating] || ESRB_RATING_LABELS["Not provided"]}`,
+              games.sort(byTitle)
+            )
+          )
+          .join("");
       } else if (state.browseMode === "favorites") {
         gameGrid.innerHTML = renderCatalogRow("favorites-only", "Favorites", [...filtered].sort(byTitle));
       } else {
-        const currentYear = new Date().getFullYear();
         const newReleases = filtered
-          .filter(game => game.releaseYear >= currentYear - 2)
+          .filter(game => isNewRelease(game))
+          .sort((a, b) => b.releaseDate.localeCompare(a.releaseDate) || byTitle(a, b));
+        const popularGames = filtered
+          .filter(game => game.isPopular === true)
           .sort(newestFirst);
         const recentlyAdded = filtered
           .filter(game => game.isNewlyAdded)
           .sort(newestFirst);
+        const currentYear = new Date().getFullYear();
         const classics = filtered
           .filter(game => game.releaseYear <= currentYear - 8)
           .sort((a, b) => a.releaseYear - b.releaseYear || byTitle(a, b));
@@ -1774,6 +1995,7 @@
         const allGames = [...filtered].sort(newestFirst);
         const rows = [
           newReleases.length && renderCatalogRow("new-releases", "New Releases", newReleases),
+          popularGames.length && renderCatalogRow("popular-games", "Popular Games", popularGames),
           recentlyAdded.length && renderCatalogRow("recently-added", "Recently Added", recentlyAdded),
           renderCatalogRow(
             "favorites",
@@ -1803,7 +2025,7 @@
 You are the Lead Accessibility Vision Auditor for "Gaming The System" (CodeSquad Sprint, Team Main Character Energy).
 Mandate: HIGH ACCURACY OVER SPEED. Gamers with physical motor challenges risk wasting up to $70 on unplayable games.
 Examine the image (settings menu, HUD, or box art) against standardized motor taxonomies:
-1. Game Title & Verified Platforms (PS5, PS4, Xbox, Switch, PC).
+1. Game title and verified platform availability (PlayStation, Xbox, Nintendo, Windows, macOS, Linux, and cloud services); use accurate full platform names and do not infer unsupported platforms.
 2. Motor features:
    - full_button_remapping (true/false)
    - hold_to_toggle_inputs (true/false)
@@ -1817,7 +2039,7 @@ Return strictly the JSON schema requested.
 `;
 
     const PROMPT_USER_QUERY = `
-Analyze this game screenshot or cover art. Extract the exact title, motor accessibility accommodations, adaptive controller compatibility, and confidence rating.
+Analyze this game screenshot or cover art. Extract the exact title, motor accessibility accommodations, adaptive controller compatibility, confidence rating, and ESRB rating only when its official rating mark is clearly visible. Use null when the rating is absent or unreadable; never guess.
 Output MUST strictly conform to JSON format:
 {
   "vision_analysis": {
@@ -1826,6 +2048,7 @@ Output MUST strictly conform to JSON format:
       "title": "String",
       "release_year": 2023,
       "platforms_detected": ["String"],
+      "esrb_rating": "E" | "E10+" | "T" | "M" | "AO" | "RP" | null,
       "confidence_score": 0.95,
       "suggested_trailer_id": "String"
     },
@@ -1893,7 +2116,7 @@ Output MUST strictly conform to JSON format:
             "adaptive_hardware_profile": {
               "xbox_adaptive_controller": "Requires Adapter",
               "playstation_access_controller": "Untested",
-              "recommended_setup_notes": "Playable on Nintendo Switch via NSO with external switch adapters or 3DS grip extensions."
+              "recommended_setup_notes": "The 3DS version requires Nintendo 3DS hardware; do not confuse it with the original Ocarina of Time version available through Nintendo Switch Online."
             },
             "audit_confidence": {
               "rating": "High",
@@ -1905,9 +2128,12 @@ Output MUST strictly conform to JSON format:
         catalog_entry: {
           id: "oot3d",
           title: "The Legend of Zelda: Ocarina of Time 3D",
+          esrbRating: "E10+",
+          releaseDate: "2011-06-19",
+          isPopular: true,
           releaseYear: 2011,
-          platforms: ["Nintendo 3DS", "Nintendo Switch (NSO)"],
-          genres: ["Action-Adventure", "Fantasy"],
+          platforms: ["Nintendo 3DS"],
+          genres: ["Action-Adventure", "Action", "Fantasy", "Adventure"],
           features: {
             fullRemap: false,
             holdToToggle: true,
@@ -1985,9 +2211,12 @@ Output MUST strictly conform to JSON format:
         catalog_entry: {
           id: "spiderman2",
           title: "Marvel's Spider-Man 2",
+          esrbRating: "T",
+          releaseDate: "2023-10-20",
+          isPopular: true,
           releaseYear: 2023,
-          platforms: ["PS5"],
-          genres: ["Action-Adventure", "Superhero"],
+          platforms: ["PlayStation 5", "Microsoft Windows"],
+          genres: ["Action-Adventure", "Action", "Open World", "Superhero"],
           features: {
             fullRemap: true,
             holdToToggle: true,
@@ -2065,9 +2294,12 @@ Output MUST strictly conform to JSON format:
         catalog_entry: {
           id: "starfield",
           title: "Starfield",
+          esrbRating: "M",
+          releaseDate: "2023-09-06",
+          isPopular: true,
           releaseYear: 2023,
-          platforms: ["Xbox Series X/S", "PC"],
-          genres: ["Action RPG", "Sci-Fi"],
+          platforms: ["Xbox Series X|S", "Microsoft Windows", "PlayStation 5"],
+          genres: ["Action RPG", "Open World", "Sci-Fi"],
           features: {
             fullRemap: true,
             holdToToggle: true,
@@ -2113,7 +2345,7 @@ Output MUST strictly conform to JSON format:
     }
 
     // Process & Render Vision Output
-    function displayVisionResult(rawAnalysis, customTrailerId = null) {
+    function displayVisionResult(rawAnalysis, customTrailerId = null, knownCatalogEntry = null) {
       const analysis = rawAnalysis.vision_analysis;
       const title = analysis.identified_game.title;
       const trailerId = customTrailerId || analysis.identified_game.suggested_trailer_id || "R2Ebc_OFeug";
@@ -2123,9 +2355,12 @@ Output MUST strictly conform to JSON format:
       currentAnalyzedGame = {
         id: entryId,
         title: title,
-        releaseYear: analysis.identified_game.release_year || 2023,
-        platforms: analysis.identified_game.platforms_detected || ["Multiplatform"],
-        genres: ["Accessibility Audited"],
+        esrbRating: analysis.identified_game.esrb_rating || knownCatalogEntry?.esrbRating || null,
+        releaseDate: knownCatalogEntry?.releaseDate || null,
+        isPopular: knownCatalogEntry?.isPopular === true,
+        releaseYear: knownCatalogEntry?.releaseYear || analysis.identified_game.release_year || 2023,
+        platforms: knownCatalogEntry?.platforms || analysis.identified_game.platforms_detected || ["Multiplatform"],
+        genres: knownCatalogEntry?.genres || ["Accessibility Audited"],
         features: {
           fullRemap: Boolean(analysis.verified_motor_features?.full_button_remapping?.status),
           holdToToggle: Boolean(analysis.verified_motor_features?.hold_to_toggle_inputs?.status),
@@ -2143,8 +2378,8 @@ Output MUST strictly conform to JSON format:
           analysis.adaptive_hardware_profile?.recommended_setup_notes || "Profiled for standard adaptive controller configurations."
         ],
         hardwareCompatibility: [
-          `PS Access: ${analysis.adaptive_hardware_profile?.playstation_access_controller || 'Untested'}`,
-          `XAC: ${analysis.adaptive_hardware_profile?.xbox_adaptive_controller || 'Untested'}`
+          `PlayStation Access Controller: ${analysis.adaptive_hardware_profile?.playstation_access_controller || 'Untested'}`,
+          `Xbox Adaptive Controller (XAC): ${analysis.adaptive_hardware_profile?.xbox_adaptive_controller || 'Untested'}`
         ],
         media: {
           trailerId: trailerId,
@@ -2153,6 +2388,8 @@ Output MUST strictly conform to JSON format:
         citationUrl: "https://caniplaythat.com/category/accessibility-reviews/",
         isNewlyAdded: true
       };
+      catalogReleaseDate.value = currentAnalyzedGame.releaseDate || "";
+      catalogMarkPopular.checked = currentAnalyzedGame.isPopular;
 
       statusDot.className = "status-dot complete";
       visionStatusLabel.textContent = `Identified: ${title}`;
@@ -2204,8 +2441,8 @@ Output MUST strictly conform to JSON format:
               Adaptive Controller Profile:
             </div>
             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
-              PS Access: <strong style="color:#ffffff;">${escapeHtml(analysis.adaptive_hardware_profile?.playstation_access_controller || 'Untested')}</strong> • 
-              XAC: <strong style="color:#ffffff;">${escapeHtml(analysis.adaptive_hardware_profile?.xbox_adaptive_controller || 'Untested')}</strong>
+              <a class="hardware-profile-link" href="${PLAYSTATION_ACCESS_URL}" target="_blank" rel="noopener noreferrer">PlayStation Access Controller</a>: <strong style="color:#ffffff;">${escapeHtml(analysis.adaptive_hardware_profile?.playstation_access_controller || 'Untested')}</strong> •
+              <a class="hardware-profile-link" href="${XBOX_ADAPTIVE_CONTROLLER_URL}" target="_blank" rel="noopener noreferrer">Xbox Adaptive Controller (XAC)</a>: <strong style="color:#ffffff;">${escapeHtml(analysis.adaptive_hardware_profile?.xbox_adaptive_controller || 'Untested')}</strong>
             </div>
           </div>
         </div>
@@ -2221,6 +2458,8 @@ Output MUST strictly conform to JSON format:
       visionStatusLabel.textContent = "Executing 3-Layer Multimodal Vision Audit...";
       visionConfidence.textContent = "Scanning...";
       visionActions.style.display = "none";
+      catalogReleaseDate.value = "";
+      catalogMarkPopular.checked = false;
       rawSchema.classList.remove("visible");
 
       visionContent.innerHTML = `
@@ -2269,7 +2508,7 @@ Output MUST strictly conform to JSON format:
       }
 
       const benchmark = OFFLINE_BENCHMARKS[key] || OFFLINE_BENCHMARKS["spiderman"];
-      displayVisionResult(benchmark.raw_schema, benchmark.catalog_entry.media.trailerId);
+      displayVisionResult(benchmark.raw_schema, benchmark.catalog_entry.media.trailerId, benchmark.catalog_entry);
     }
 
     // File selection handler
@@ -2370,6 +2609,8 @@ Output MUST strictly conform to JSON format:
         return;
       }
 
+      currentAnalyzedGame.releaseDate = catalogReleaseDate.value || null;
+      currentAnalyzedGame.isPopular = catalogMarkPopular.checked;
       GAMES_DATA.unshift(currentAnalyzedGame);
       updateGameSuggestions();
       renderCatalog();

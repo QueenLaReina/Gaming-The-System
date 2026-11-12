@@ -46,6 +46,8 @@
     .hero h1 { font-family: var(--font-heading); font-size: clamp(1.8rem, 4.5vw, 3rem); line-height: 1.1; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
     .hero-meta { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
     .pill { background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.35); color: #fff; padding: .15rem .6rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
+    .hero-meta img.esrb-rating-badge { display: block; width: 40px; height: 60px; flex: 0 0 auto; object-fit: contain; background: #fff; border-radius: 2px; }
+    .esrb-rating-missing { align-self: center; color: var(--muted); font-size: .75rem; }
 
     main { padding: 2rem 0 3rem; }
     .tagline { font-size: 1.15rem; color: var(--muted); max-width: 820px; margin-bottom: 1.75rem; }
@@ -58,11 +60,16 @@
     body.light .panel { box-shadow: 0 10px 30px rgba(60, 80, 100, .15); }
     .panel h2, .section-title { font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 1rem; }
     .panel h2 span, .section-title span { color: var(--accent); }
+    .synopsis-panel { margin-bottom: 2rem; }
+    .synopsis-panel summary { font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; cursor: pointer; }
+    .synopsis-panel summary span { color: var(--accent); }
+    .synopsis-panel p { margin-top: .85rem; max-width: 900px; }
     .hl-list { list-style: none; display: grid; gap: .6rem; }
     .hl-list li { display: flex; gap: .6rem; }
     .hl-list li::before { content: "✓"; color: var(--accent); font-weight: 700; }
     .hw { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.25rem; }
-    .hw span { border: 1px solid var(--accent); color: var(--text); border-radius: 6px; padding: .2rem .6rem; font-size: .8rem; font-weight: 600; }
+    .hw a { border: 1px solid var(--accent); color: var(--text); border-radius: 6px; padding: .2rem .6rem; font-size: .8rem; font-weight: 600; text-decoration: none; }
+    .hw a:hover { text-decoration: underline; text-underline-offset: 2px; }
     .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.25rem; }
     .btn { display: inline-flex; align-items: center; gap: .45rem; padding: .65rem 1rem; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: .9rem; }
     .btn-yt { background: #dc2626; color: #fff; }
@@ -84,6 +91,9 @@
     .tally small { color: var(--muted); font-size: .78rem; }
     .note { font-size: .82rem; color: var(--muted); margin-top: 1rem; }
     .show-all { margin-top: .75rem; font: inherit; font-size: .85rem; background: none; border: none; color: var(--accent); text-decoration: underline; cursor: pointer; }
+    .comment-cta { margin-top: 1rem; border: 1px solid var(--accent); background: var(--surface); color: var(--text); }
+    .comment-cta:hover { border-color: var(--accent2); }
+    #comment-heading { scroll-margin-top: 1rem; }
 
     .opinions { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.1rem; }
     .op {
@@ -101,6 +111,26 @@
     .op .who { margin-top: auto; font-size: .85rem; }
     .op .who a { font-weight: 700; color: var(--accent); }
     .op .who span { display: block; color: var(--muted); font-size: .8rem; }
+    .comment-form { display: grid; gap: .85rem; max-width: 760px; margin: 0 0 2rem; }
+    .comment-form label { display: grid; gap: .35rem; font-weight: 600; }
+    .comment-form input, .comment-form textarea {
+      width: 100%; padding: .7rem .8rem; border: 1px solid rgba(203, 213, 225, .5);
+      border-radius: 8px; background: var(--bg2); color: var(--text); font: inherit;
+    }
+    .comment-form textarea { min-height: 120px; resize: vertical; }
+    .comment-form button {
+      justify-self: start; padding: .65rem 1rem; border: 1px solid var(--accent);
+      border-radius: 8px; background: var(--surface); color: var(--text); font: inherit;
+      font-weight: 700; cursor: pointer;
+    }
+    .comment-form button:hover { border-color: var(--accent2); }
+    .comment-list { display: grid; gap: .85rem; margin-bottom: 2rem; }
+    .user-comment { background: var(--surface); border-radius: 12px; padding: 1rem 1.15rem; overflow-wrap: anywhere; }
+    .user-comment p { white-space: pre-wrap; }
+    .user-comment-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; margin-bottom: .4rem; }
+    .user-comment time, .comment-status, .comment-guidance { color: var(--muted); font-size: .85rem; }
+    .comment-status { min-height: 1.4em; }
+    .comment-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
     .notfound { padding: 4rem 0; text-align: center; }
     footer { text-align: center; font-size: .82rem; color: var(--muted); padding: 1.5rem 0 2.5rem; }
   </style>
@@ -114,6 +144,25 @@
     (function () {
       const app = document.getElementById("app");
       const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      const playStationAccessUrl = "https://www.playstation.com/en-us/accessories/access-controller/?srsltid=AYCX9vK6Hbas-rCY7VlserzBK1o5EhrDkMwC0ndKuThbEflOzMrtyCaG";
+      const xboxAdaptiveControllerUrl = "https://www.microsoft.com/en-us/d/xbox-adaptive-controller/8nsdbhz1n3d8";
+      const horiFlexControllerUrl = "https://stores.horiusa.com/flex-controller-for-nintendo-switch/";
+      const renderHardware = hardware => {
+        const label = hardware
+          .replace(/\b(?:PS|PlayStation) Access\b(?!\s+Controller)/gi, "PlayStation Access Controller")
+          .replace(/\bXAC\b/gi, "Xbox Adaptive Controller (XAC)")
+          .replace(/\bXbox Adaptive Controller\b(?!\s*\(XAC\))/gi, "Xbox Adaptive Controller (XAC)");
+        if (/HORI Flex Controller/i.test(hardware)) {
+          return `<a href="${horiFlexControllerUrl}" target="_blank" rel="noopener noreferrer" aria-label="Learn about the HORI Flex Controller for Nintendo Switch: ${esc(label)}">⚡ ${esc(label)}</a>`;
+        }
+        if (/\b(?:PS|PlayStation) Access\b/i.test(hardware)) {
+          return `<a href="${playStationAccessUrl}" target="_blank" rel="noopener noreferrer" aria-label="Learn about the PlayStation Access Controller: ${esc(label)}">⚡ ${esc(label)}</a>`;
+        }
+        if (/\bXAC\b|Xbox Adaptive Controller/i.test(hardware)) {
+          return `<a href="${xboxAdaptiveControllerUrl}" target="_blank" rel="noopener noreferrer" aria-label="Learn about the Xbox Adaptive Controller: ${esc(label)}">⚡ ${esc(label)}</a>`;
+        }
+        return `<span>⚡ ${esc(label)}</span>`;
+      };
       const id = new URLSearchParams(window.location.search).get("id");
       const g = (window.GAME_DETAILS || {})[id];
 
@@ -123,6 +172,19 @@
         return;
       }
 
+      const esrbRatingLabels = { "E": "Everyone", "E10+": "Everyone 10+", "T": "Teen", "M": "Mature 17+", "AO": "Adults Only 18+", "RP": "Rating Pending" };
+      const esrbRatingIcons = {
+        "E": "https://www.esrb.org/wp-content/themes/esrb/assets/images/E.svg",
+        "E10+": "https://www.esrb.org/wp-content/themes/esrb/assets/images/E10plus.svg",
+        "T": "https://www.esrb.org/wp-content/themes/esrb/assets/images/T.svg",
+        "M": "https://www.esrb.org/wp-content/themes/esrb/assets/images/M.svg",
+        "AO": "https://www.esrb.org/wp-content/themes/esrb/assets/images/AO.svg",
+        "RP": "https://www.esrb.org/wp-content/themes/esrb/assets/images/RP.svg"
+      };
+      const esrbRating = g.esrbRating;
+      const esrbRatingBadge = esrbRatingIcons[esrbRating]
+        ? `<img class="esrb-rating-badge" src="${esrbRatingIcons[esrbRating]}" alt="ESRB ${esc(esrbRatingLabels[esrbRating])} rating for ${esc(g.title)}" title="ESRB ${esc(esrbRatingLabels[esrbRating])}">`
+        : `<span class="esrb-rating-missing">ESRB rating not provided</span>`;
       const t = g.theme, root = document.documentElement.style;
       root.setProperty("--bg1", t.bg1); root.setProperty("--bg2", t.bg2); root.setProperty("--bg3", t.bg3 || t.bg2);
       root.setProperty("--surface", t.surface); root.setProperty("--accent", t.accent); root.setProperty("--accent2", t.accent2);
@@ -146,18 +208,23 @@
               <span class="pill">${g.releaseYear}</span>
               ${g.genres.map(x => `<span class="pill">${esc(x)}</span>`).join("")}
               ${g.platforms.map(x => `<span class="pill">${esc(x)}</span>`).join("")}
+              ${esrbRatingBadge}
             </div>
           </div>
         </header>
 
         <main id="main" class="container">
           <p class="tagline">${esc(g.tagline)}</p>
+          <details class="panel synopsis-panel">
+            <summary><span>◆</span> About this game</summary>
+            <p>${esc(g.synopsis)}</p>
+          </details>
 
           <div class="grid-2">
             <section class="panel" aria-labelledby="feat-h">
               <h2 id="feat-h"><span>◆</span> Motor Accessibility at a Glance</h2>
               <ul class="hl-list">${g.highlights.map(h => `<li>${esc(h)}</li>`).join("")}</ul>
-              <div class="hw" aria-label="Adaptive hardware">${g.hardware.map(h => `<span>⚡ ${esc(h)}</span>`).join("")}</div>
+              <div class="hw" aria-label="Adaptive hardware">${g.hardware.map(renderHardware).join("")}</div>
               <div class="actions">
                 <a class="btn btn-yt" href="https://www.youtube.com/watch?v=${g.trailerId}" target="_blank" rel="noopener noreferrer" aria-label="Watch ${esc(g.title)} gameplay trailer on YouTube (opens in a new tab)">▶ Watch Gameplay Trailer ↗</a>
               </div>
@@ -178,6 +245,7 @@
               </div>
               <button type="button" class="show-all" id="show-all" hidden>Show all ${total} opinions</button>
               <p class="note">Hand-picked, word-for-word quotes from disabled reviewers, accessibility publications and player reviews. Every name and quote links to the original so you can check it yourself.</p>
+              <a class="btn comment-cta" href="#comment-heading">Would you like to leave a comment? <span aria-hidden="true">↓</span></a>
             </section>
           </div>
 
@@ -185,6 +253,25 @@
             <h2 class="section-title" id="op-h"><span>◆</span> Public Opinions</h2>
             <p class="sr-status" id="op-status" aria-live="polite" style="position:absolute;left:-9999px"></p>
             <div class="opinions" id="opinions"></div>
+          </section>
+
+          <section aria-labelledby="comment-heading" style="margin-top:2.5rem;">
+            <h2 class="section-title" id="comment-heading"><span>◆</span> Share Your Experience</h2>
+            <p class="comment-guidance">Comments are public and shared with other visitors. Please do not include private information.</p>
+            <form class="comment-form" id="comment-form">
+              <label for="comment-name">Your name
+                <input id="comment-name" name="name" type="text" maxlength="50" autocomplete="name" required>
+              </label>
+              <label for="comment-content">Your comment
+                <textarea id="comment-content" name="content" maxlength="1000" required></textarea>
+              </label>
+              <label class="comment-honeypot" aria-hidden="true" tabindex="-1">Leave this field empty
+                <input name="website" type="text" tabindex="-1" autocomplete="off">
+              </label>
+              <button type="submit">Post comment</button>
+              <p class="comment-status" id="comment-status" role="status" aria-live="polite"></p>
+            </form>
+            <div class="comment-list" id="user-comments" aria-label="Community comments" aria-live="polite"></div>
           </section>
         </main>
         <footer>Gaming The System · Accessible Gaming Hub · <a href="gaming-hub.html">Back to catalog</a></footer>
@@ -202,6 +289,9 @@
       const list = document.getElementById("opinions");
       const status = document.getElementById("op-status");
       const showAll = document.getElementById("show-all");
+      const commentForm = document.getElementById("comment-form");
+      const commentStatus = document.getElementById("comment-status");
+      const userComments = document.getElementById("user-comments");
       const render = filter => {
         const items = g.opinions.filter(o => !filter || o.sentiment === filter);
         list.innerHTML = items.map(o => `
@@ -223,6 +313,67 @@
       }));
       showAll.addEventListener("click", () => render(null));
       render(null);
+
+      function renderUserComments(comments) {
+        userComments.innerHTML = comments.length
+          ? comments.map(comment => {
+              const date = new Date(comment.createdAt);
+              return `
+                <article class="user-comment">
+                  <div class="user-comment-meta">
+                    <strong>${esc(comment.name)}</strong>
+                    <time datetime="${esc(comment.createdAt)}">${esc(date.toLocaleString())}</time>
+                  </div>
+                  <p>${esc(comment.content)}</p>
+                </article>
+              `;
+            }).join("")
+          : "<p class=\"comment-guidance\">No community comments yet. Be the first to share your experience.</p>";
+      }
+
+      async function loadUserComments() {
+        const response = await fetch(`/api/game-comments?gameId=${encodeURIComponent(id)}`);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "Could not load community comments.");
+        renderUserComments(data.comments);
+      }
+
+      loadUserComments().catch(error => {
+        console.error("Could not load community comments:", error);
+        commentStatus.textContent = error.message || "Community comments are temporarily unavailable.";
+      });
+
+      commentForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        const submitButton = commentForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        commentStatus.textContent = "Posting your comment…";
+
+        try {
+          const formData = new FormData(commentForm);
+          const response = await fetch("/api/game-comments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              gameId: id,
+              name: formData.get("name"),
+              content: formData.get("content"),
+              website: formData.get("website")
+            })
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(data.error || "Could not post your comment.");
+
+          commentForm.reset();
+          commentStatus.textContent = "Your comment is now public.";
+          await loadUserComments();
+        } catch (error) {
+          console.error("Could not submit community comment:", error);
+          commentStatus.textContent = error.message || "Could not post your comment. Please try again.";
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
     })();
   </script>
 </body>

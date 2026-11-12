@@ -7,3 +7,13 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model PublicGameComment {
+  id        String   @id @default(cuid())
+  gameId    String   @db.VarChar(64)
+  name      String   @db.VarChar(50)
+  content   String   @db.VarChar(1000)
+  createdAt DateTime @default(now())
+
+  @@index([gameId, createdAt])
+}

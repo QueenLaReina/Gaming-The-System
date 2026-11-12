@@ -36,6 +36,17 @@ Keep credentials private; `.env` is ignored by Git. Do not put secret keys in br
 
 `NEXTAUTH_URL` can optionally be set to the site's public base URL for metadata. The Prisma schema uses PostgreSQL and expects `DATABASE_URL` when database-backed Prisma commands are used.
 
+Community comments on game detail pages are shared publicly and stored in PostgreSQL. Configure `DATABASE_URL` on the server, then apply the schema migration from `gaming_hub/nextjs_space`:
+
+```powershell
+npx prisma migrate deploy
+npx prisma generate
+```
+
+The comment API validates names and comment lengths. Do not post personal or sensitive information; comments are visible to all visitors.
+
+Catalog records use an ISO first-release `releaseDate` (`YYYY-MM-DD`) for the 28-day New Releases row and an explicit `isPopular` flag for the curated Popular Games row. When adding an audited game, enter its verified release date and choose whether it belongs in Popular Games. Keep platform and genre lists synchronized between `public/gaming-hub.html` and `public/game-details-data.js`. ESRB badges use official rating icon images; only add an ESRB code when it has been verified, and leave it blank when unknown.
+
 ## Available scripts
 
 Run these from `gaming_hub/nextjs_space`:
@@ -52,7 +63,10 @@ Run these from `gaming_hub/nextjs_space`:
 | Path | Description |
 | --- | --- |
 | `gaming_hub/nextjs_space/` | Main Next.js application and accessible gaming catalog |
-| `gaming_hub/nextjs_space/public/gaming-hub.html` | Catalog interface, filters, browse modes, search, and vision-audit UI |
+| `gaming_hub/nextjs_space/public/gaming-hub.html` | Catalog interface, filters, ESRB rating browse mode, search, and vision-audit UI |
+| `gaming_hub/nextjs_space/public/game.html` | Game synopses, ESRB ratings, public opinions, hardware links, and community comments |
+| `gaming_hub/nextjs_space/public/game-details-data.js` | Curated game platforms, genres, ratings, release dates, synopses, and opinions |
+| `gaming_hub/nextjs_space/app/api/game-comments/` | Shared community comment API |
 | `gaming_hub/nextjs_space/app/api/vision/` | Server-side endpoint for screenshot vision audits |
 | `community-sprint-starter-live/` | Separate community-resource starter project |
 | `Uploads/` | Uploaded project assets |
