@@ -2,6 +2,18 @@ import { useEffect, useState } from 'react';
 import { api } from '../api.js';
 
 const EMPTY = { name: '', category: 'Food', description: '', neighborhood: '', hours: '', phone: '', website: '' };
+const FAVORITES_KEY = 'community-sprint-favorites';
+
+function loadFavorites() {
+  try {
+    const saved = window.localStorage.getItem(FAVORITES_KEY);
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed.filter((value) => Number.isFinite(Number(value)) || typeof value === 'string') : [];
+  } catch {
+    return [];
+  }
+}
 
 // Reads and writes the `resources` table through the API.
 export default function ResourceBoard() {
@@ -12,6 +24,7 @@ export default function ResourceBoard() {
   const [form, setForm] = useState(EMPTY);
   const [showForm, setShowForm] = useState(false);
   const [message, setMessage] = useState(null);
+  const [favoriteIds, setFavoriteIds] = useState(() => loadFavorites());
 
   async function load(nextSearch = search, nextCategory = category) {
     try {
@@ -27,6 +40,14 @@ export default function ResourceBoard() {
     load('', '');
   }, []);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteIds));
+    } catch {
+      // Ignore storage failures in private browsing or restricted environments.
+    }
+  }, [favoriteIds]);
+
   async function save(event) {
     event.preventDefault();
     try {
@@ -40,6 +61,19 @@ export default function ResourceBoard() {
     }
   }
 
+  const favoriteSet = new Set(favoriteIds.map((id) => String(id)));
+  const favorites = resources.filter((resource) => favoriteSet.has(String(resource.id)));
+
+  const toggleFavorite = (resourceId) => {
+    const normalizedId = String(resourceId);
+    setFavoriteIds((current) => {
+      const asStrings = current.map((id) => String(id));
+      return asStrings.includes(normalizedId)
+        ? asStrings.filter((id) => id !== normalizedId)
+        : [...asStrings, normalizedId];
+    });
+  };
+
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
   return (
@@ -49,6 +83,24 @@ export default function ResourceBoard() {
         <button type="button" className="ghost" onClick={() => setShowForm(!showForm)}>
           {showForm ? 'Close' : '+ Add one'}
         </button>
+      </div>
+
+      <div className="favorites-panel" aria-live="polite">
+        <h3>My favorites</h3>
+        {favorites.length === 0 ? (
+          <p className="favorites-empty">No favorites saved yet.</p>
+        ) : (
+          <ul className="favorite-list">
+            {favorites.map((resource) => (
+              <li key={resource.id}>
+                <span>{resource.name}</span>
+                <button type="button" className="favorite-toggle active" aria-label={`Remove ${resource.name} from favorites`} onClick={() => toggleFavorite(resource.id)}>
+                  ★
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <form className="filters" onSubmit={(e) => { e.preventDefault(); load(); }}>
@@ -81,14 +133,28 @@ export default function ResourceBoard() {
 
       <p className="result-count">{resources.length} result{resources.length === 1 ? '' : 's'}</p>
       <ul className="resource-list">
-        {resources.map((r) => (
-          <li key={r.id}>
-            <span className="tag">{r.category}</span>
-            <h3>{r.name}</h3>
-            <p>{r.description}</p>
-            <small>{[r.neighborhood, r.hours, r.phone].filter(Boolean).join(' · ')}</small>
-          </li>
-        ))}
+        {resources.map((r) => {
+          const isFavorite = favoriteSet.has(String(r.id));
+          return (
+            <li key={r.id}>
+              <span className="tag">{r.category}</span>
+              <div className="resource-title-row">
+                <h3>{r.name}</h3>
+                <button
+                  type="button"
+                  className={`favorite-toggle ${isFavorite ? 'active' : ''}`}
+                  aria-label={isFavorite ? `Remove ${r.name} from favorites` : `Add ${r.name} to favorites`}
+                  aria-pressed={isFavorite}
+                  onClick={() => toggleFavorite(r.id)}
+                >
+                  {isFavorite ? '★' : '☆'}
+                </button>
+              </div>
+              <p>{r.description}</p>
+              <small>{[r.neighborhood, r.hours, r.phone].filter(Boolean).join(' · ')}</small>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

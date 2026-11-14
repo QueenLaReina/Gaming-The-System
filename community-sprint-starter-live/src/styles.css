@@ -90,6 +90,16 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(29,107,82,.2
 .resource-list h3 { font-size: 16px; margin: 4px 0 2px; }
 .resource-list p { margin: 0; font-size: 14px; }
 .resource-list small { color: var(--muted); font-size: 12px; }
+.resource-title-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 2px; }
+.favorite-toggle { border: 1px solid #d9d4c9; background: transparent; color: #f5b642; padding: 5px 8px; min-width: 42px; line-height: 1; }
+.favorite-toggle:hover { background: #fff7d6; }
+.favorite-toggle.active { background: #fff7d6; border-color: #f0c242; color: #8d6500; }
+.favorites-panel { margin-bottom: 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #faf7f0; }
+.favorites-panel h3 { font-size: 18px; margin-bottom: 8px; }
+.favorites-empty { margin: 0; color: var(--muted); font-size: 14px; }
+.favorite-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.favorite-list li { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 999px; background: #fff; border: 1px solid var(--line); }
+.favorite-list span { font-size: 13px; font-weight: 600; }
 .tag { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--green-dark); background: #e6f2ec; padding: 2px 8px; border-radius: 999px; }
 
 /* ---------- Skills ---------- */
