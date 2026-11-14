@@ -4,15 +4,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model PublicGameComment {
-  id        String   @id @default(cuid())
-  gameId    String   @db.VarChar(64)
-  name      String   @db.VarChar(50)
-  content   String   @db.VarChar(1000)
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  gameId    String   
+  name      String   
+  content   String   
   createdAt DateTime @default(now())
 
   @@index([gameId, createdAt])

@@ -9,18 +9,18 @@ export async function POST(req: NextRequest) {
     if (!base64Data || !prompt) {
       return NextResponse.json({ error: 'Missing image or prompt.' }, { status: 400 })
     }
-    if (!process.env.ABACUSAI_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({ error: 'AI service is not configured on the server.' }, { status: 500 })
     }
 
-    const res = await fetch('https://apps.abacus.ai/v1/chat/completions', {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.ABACUSAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.GEMINI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3.8-flash',
         messages: [
           ...(systemInstruction ? [{ role: 'system', content: systemInstruction }] : []),
           {
@@ -39,6 +39,12 @@ export async function POST(req: NextRequest) {
     if (!res.ok) {
       const detail = await res.text()
       console.error('Vision AI request failed:', res.status, detail)
+      if (res.status === 503) {
+        return NextResponse.json({ code: 'AI_SERVICE_UNAVAILABLE', error: `AI service is temporarily unavailable. Please try again later.` }, { status: 503 })
+      }
+      if (res.status === 429 && detail.includes('RESOURCE_EXHAUSTED')) {
+        return NextResponse.json({ code: 'AI_CREDITS_EXHAUSTED', error: `AI credits are exhausted. Please try again later.` }, { status: 429 })
+      }
       return NextResponse.json({ error: `AI vision request failed (status ${res.status}).` }, { status: 502 })
     }
 
